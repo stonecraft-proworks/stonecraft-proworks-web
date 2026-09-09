@@ -31,19 +31,34 @@ const { showAll = false } = Astro.props;
       linkHref={showAll ? undefined : '/services'}
     />
 
-    <div class="services__intro">
-      <h2 class="t-h2">Explore Our Outdoor Construction Services</h2>
-      <p class="measure services__lead">
-        Thoughtfully designed outdoor solutions combining premium materials, precise
-        craftsmanship and professional execution.
-      </p>
-    </div>
+    {/*
+      En /services la cabecera de pagina ya lleva este titulo y esta bajada:
+      repetirlos aqui duplicaba el texto y metia dos encabezados iguales en
+      la jerarquia. Solo se muestran cuando la seccion vive en la portada.
+    */}
+    {
+      !showAll && (
+        <div class="services__intro">
+          <h2 class="t-h2">Explore Our Outdoor Construction Services</h2>
+          <p class="measure services__lead">
+            Thoughtfully designed outdoor solutions combining premium materials, precise
+            craftsmanship and professional execution.
+          </p>
+        </div>
+      )
+    }
 
     {
       showAll ? (
+        /*
+         * En /services no hay bloque de intro, asi que las tarjetas cuelgan
+         * directamente del h1 de la cabecera: van en h2 para no saltarse un
+         * nivel de la jerarquia. En portada si hay un h2 encima y por eso
+         * las tarjetas van en h3.
+         */
         <div class="services__grid">
           {services.map((service) => (
-            <ServiceCard service={service} headingLevel="h3" />
+            <ServiceCard service={service} headingLevel="h2" />
           ))}
         </div>
       ) : (
