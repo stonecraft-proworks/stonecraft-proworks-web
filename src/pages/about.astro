@@ -1,0 +1,39 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import IntroSection from '../components/IntroSection.astro';
+import ProcessSteps from '../components/ProcessSteps.astro';
+import ContactCTA from '../components/ContactCTA.astro';
+import MediaSlot from '../components/MediaSlot.astro';
+import SectionLabel from '../components/SectionLabel.astro';
+
+/*
+ * La narrativa de esta pagina (historia de la compania, equipo, anos de
+ * actividad, certificaciones) NO esta entregada y no se inventa. Lo unico
+ * disponible es el copy del boceto, que ya vive en IntroSection, y el
+ * proceso de 5 pasos confirmado. El resto queda como hueco marcado.
+ */
+---
+
+<Base
+  title="About"
+  description="StoneCraft ProWorks builds premium outdoor living spaces across South Florida."
+>
+  <PageHeader eyebrow="Who we are" title="Built to last, crafted to impress." />
+
+  <IntroSection />
+
+  <section class="section surface-sand" id="story">
+    <div class="shell">
+      <SectionLabel label="Our story" />
+      <MediaSlot
+        kind="video"
+        ratio="16 / 9"
+        label="Brand story film, linked from the home page hero (Watch Our Story)"
+      />
+    </div>
+  </section>
+
+  <ProcessSteps />
+  <ContactCTA />
+</Base>

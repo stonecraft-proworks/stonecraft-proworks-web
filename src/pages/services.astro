@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import ServicesGrid from '../components/ServicesGrid.astro';
+import ContactCTA from '../components/ContactCTA.astro';
+---
+
+<Base
+  title="Services"
+  description="Paver installation, pool decks, outdoor living, kitchens, restoration and architectural surfaces across South Florida."
+>
+  <PageHeader
+    eyebrow="What we build"
+    title="Explore Our Outdoor Construction Services"
+    lead="Thoughtfully designed outdoor solutions combining premium materials, precise craftsmanship and professional execution."
+  />
+  <ServicesGrid showAll />
+  <ContactCTA />
+</Base>

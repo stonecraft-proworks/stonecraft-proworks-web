@@ -1,0 +1,69 @@
+---
+import SectionLabel from './SectionLabel.astro';
+import MediaSlot from './MediaSlot.astro';
+import { segments } from '../data/segments';
+
+/**
+ * Galeria de proyectos.
+ *
+ * No hay ni un proyecto entregado (decision 1, pendiente): ni fotos, ni
+ * nombres, ni ubicaciones, ni alcance. No se inventa ninguno. Queda la
+ * retícula definitiva con huecos marcados, uno por segmento, para que al
+ * llegar el material solo haya que rellenar los datos.
+ */
+interface Props {
+  showLink?: boolean;
+  count?: number;
+}
+
+const { showLink = true, count = 6 } = Astro.props;
+const placeholders = Array.from({ length: count }, (_, i) => i + 1);
+---
+
+<section class="section" id="projects">
+  <div class="shell">
+    <SectionLabel
+      label="Selected work"
+      linkLabel={showLink ? 'View all projects' : undefined}
+      linkHref={showLink ? '/projects' : undefined}
+    />
+
+    {
+      segments.map((segment) => (
+        <ul class="projects__grid" data-seg={segment.id}>
+          {placeholders.map((n) => (
+            <li class="projects__item">
+              <MediaSlot
+                ratio="3 / 2"
+                label={`${segment.label} project ${n}: photograph, name, location and scope`}
+              />
+            </li>
+          ))}
+        </ul>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .projects__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 40rem) {
+    .projects__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 62rem) {
+    .projects__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

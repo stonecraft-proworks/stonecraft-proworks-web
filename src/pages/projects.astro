@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import ProjectsGrid from '../components/ProjectsGrid.astro';
+import BeforeAfter from '../components/BeforeAfter.astro';
+import ContactCTA from '../components/ContactCTA.astro';
+---
+
+<Base
+  title="Projects"
+  description="Completed residential and commercial outdoor construction projects across South Florida."
+>
+  <PageHeader eyebrow="Our work" title="Projects" />
+  <ProjectsGrid showLink={false} count={9} />
+  <BeforeAfter />
+  <ContactCTA />
+</Base>

@@ -1,0 +1,68 @@
+---
+/**
+ * Logo de marca. Siempre desde el SVG maestro, nunca reconstruido.
+ *
+ * Reglas de las guidelines que este componente hace cumplir:
+ * - Tamanos minimos: horizontal full 170px, compact 120px, vertical full
+ *   130px, vertical compact 90px, icono 24px. Por debajo se sube un nivel
+ *   en la escalera de simplificacion, no se escala hacia abajo.
+ * - Variante segun fondo: mas claro que Sandstone -> color o black;
+ *   mas oscuro o sobre fotografia -> white.
+ * - Nunca se distorsiona: solo se fija el ancho y la altura va en auto.
+ */
+
+type Lockup = 'horizontal' | 'horizontal-compact' | 'vertical' | 'vertical-compact' | 'icon';
+type Variant = 'color' | 'black' | 'white';
+
+interface Props {
+  lockup?: Lockup;
+  variant?: Variant;
+  /** Ancho en px. Se valida contra el minimo del lockup. */
+  width?: number;
+  class?: string;
+}
+
+const MIN_WIDTH: Record<Lockup, number> = {
+  horizontal: 170,
+  'horizontal-compact': 120,
+  vertical: 130,
+  'vertical-compact': 90,
+  icon: 24,
+};
+
+/** Relacion de aspecto tomada del viewBox de cada SVG maestro. */
+const RATIO: Record<Lockup, number> = {
+  horizontal: 1684.899 / 576,
+  'horizontal-compact': 1522.927 / 327.607,
+  vertical: 1040.909 / 877,
+  'vertical-compact': 1040.909 / 758.004,
+  icon: 1622 / 1520,
+};
+
+const {
+  lockup = 'horizontal-compact',
+  variant = 'color',
+  width = MIN_WIDTH[lockup],
+  class: className = '',
+} = Astro.props;
+
+if (width < MIN_WIDTH[lockup]) {
+  throw new Error(
+    `Logo: ${width}px queda por debajo del minimo de ${MIN_WIDTH[lockup]}px para el lockup "${lockup}". ` +
+      'Las brand guidelines prohiben escalar por debajo del minimo: sube un nivel en la escalera de simplificacion.',
+  );
+}
+
+const src = `/brand/stonecraft-${lockup}-${variant}.svg`;
+const height = Math.round(width / RATIO[lockup]);
+---
+
+<img
+  src={src}
+  width={width}
+  height={height}
+  alt="StoneCraft ProWorks"
+  class={className}
+  style={`width:${width}px;height:auto`}
+  decoding="async"
+/>

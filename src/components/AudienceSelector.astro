@@ -1,0 +1,230 @@
+---
+import Logo from './Logo.astro';
+import { segments } from '../data/segments';
+
+/**
+ * Entrada Residential / Commercial (brief seccion 1, decision 5 y 9).
+ *
+ * Decisiones de accesibilidad, deliberadas:
+ * - NO es un modal con focus trap. El cliente pidio que se cierre al hacer
+ *   scroll hacia abajo; atrapar el foco y bloquear el scroll haria imposible
+ *   ese gesto y dejaria al usuario encerrado. Es una capa de bienvenida no
+ *   bloqueante: el foco entra en la primera opcion, Escape cierra, hay boton
+ *   de cerrar visible y la pagina de debajo sigue siendo navegable.
+ * - Elegir un segmento se guarda en localStorage y persiste entre paginas.
+ * - Cerrar sin elegir solo silencia la capa en esta sesion (sessionStorage),
+ *   y el sitio se queda en el segmento por defecto: residential.
+ */
+const titleId = 'audience-selector-title';
+---
+
+<div class="selector" id="audience-selector" role="dialog" aria-labelledby={titleId}>
+  <div class="selector__panel">
+    <button type="button" class="selector__close" id="selector-close">
+      <span class="sr-only">Close</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M6 6l12 12M18 6L6 18" />
+      </svg>
+    </button>
+
+    <Logo lockup="vertical-compact" variant="color" width={132} class="selector__logo" />
+
+    <h2 class="t-h2 selector__title" id={titleId}>Welcome to StoneCraft ProWorks</h2>
+    <p class="selector__lead">What type of project are you planning?</p>
+
+    <div class="selector__options">
+      {
+        segments.map((segment, index) => (
+          <button
+            type="button"
+            class="selector__option"
+            data-segment-choice={segment.id}
+            autofocus={index === 0 ? true : undefined}
+          >
+            <span class="t-label selector__option-label">{segment.label}</span>
+            <span class="selector__option-blurb">{segment.blurb}</span>
+          </button>
+        ))
+      }
+    </div>
+
+    <p class="selector__hint">Scroll to browse the full site.</p>
+  </div>
+</div>
+
+<script>
+  import { bindSegmentChoices } from '../scripts/segment';
+
+  const root = document.documentElement;
+  const selector = document.getElementById('audience-selector');
+  const closeButton = document.getElementById('selector-close');
+
+  if (selector) {
+    const hide = () => {
+      root.dataset.selectorDismissed = 'true';
+      try {
+        sessionStorage.setItem('sc-selector-dismissed', 'true');
+      } catch {
+        // Storage bloqueado: se cierra igual, solo que no se recuerda.
+      }
+      window.removeEventListener('scroll', onScroll);
+    };
+
+    // Cierre al hacer scroll HACIA ABAJO (decision 9). Se ignora el rebote
+    // hacia arriba y los desplazamientos minimos.
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (y > lastY && y > 48) hide();
+      lastY = y;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    bindSegmentChoices(selector, hide);
+    closeButton?.addEventListener('click', hide);
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && root.dataset.selectorDismissed !== 'true') hide();
+    });
+  }
+</script>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .selector {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: grid;
+    place-items: center;
+    padding: 1.25rem;
+    background-color: color-mix(in srgb, var(--color-rich-black) 78%, transparent);
+    animation: selector-in 400ms ease both;
+  }
+
+  /* Oculto antes del primer paint si ya hay eleccion o cierre previo. */
+  :global(html[data-segment-chosen='true']) .selector,
+  :global(html[data-selector-dismissed='true']) .selector {
+    display: none;
+  }
+
+  @keyframes selector-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .selector__panel {
+    position: relative;
+    width: min(34rem, 100%);
+    max-height: 100%;
+    overflow-y: auto;
+    background-color: var(--color-warm-cream);
+    padding: clamp(2rem, 5vw, 3.25rem);
+    text-align: center;
+  }
+
+  .selector__close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    background: none;
+    border: none;
+    color: var(--color-charcoal);
+    cursor: pointer;
+    transition: color 200ms ease;
+  }
+
+  .selector__close:hover {
+    color: var(--color-rich-black);
+  }
+
+  .selector__close svg {
+    width: 20px;
+    height: 20px;
+    stroke-linecap: round;
+  }
+
+  .selector__logo {
+    margin-inline: auto;
+  }
+
+  .selector__title {
+    margin: 1.75rem 0 0.75rem;
+  }
+
+  .selector__lead {
+    margin: 0 0 2rem;
+    color: var(--color-charcoal);
+  }
+
+  .selector__options {
+    display: grid;
+    gap: 1rem;
+  }
+
+  /* Objetivos grandes y comodos en movil, como pide el brief. */
+  .selector__option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 5.5rem;
+    padding: 1.25rem;
+    background-color: transparent;
+    border: 1px solid color-mix(in srgb, var(--color-charcoal) 30%, transparent);
+    color: var(--color-rich-black);
+    cursor: pointer;
+    transition:
+      background-color 200ms ease,
+      border-color 200ms ease,
+      color 200ms ease;
+  }
+
+  .selector__option:hover {
+    background-color: var(--color-rich-black);
+    border-color: var(--color-rich-black);
+    color: var(--color-warm-cream);
+  }
+
+  .selector__option:active {
+    transform: translateY(1px);
+  }
+
+  .selector__option-blurb {
+    font-size: 0.875rem;
+    color: inherit;
+    opacity: 0.75;
+  }
+
+  .selector__hint {
+    margin: 2rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--color-charcoal);
+    opacity: 0.75;
+  }
+
+  @media (min-width: 40rem) {
+    .selector__options {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

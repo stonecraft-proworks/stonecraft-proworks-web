@@ -1,0 +1,74 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import MobileContactBar from '../components/MobileContactBar.astro';
+import AudienceSelector from '../components/AudienceSelector.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  /** El selector de audiencia solo se ofrece en la portada. */
+  showSelector?: boolean;
+}
+
+const { title, description, showSelector = false } = Astro.props;
+const fullTitle = `${title} | ${site.name}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
+---
+
+<!doctype html>
+<html lang="en" data-segment="residential">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon-transparent.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+
+    {/*
+      Se aplica el segmento guardado ANTES del primer paint para que no
+      haya parpadeo entre el contenido residencial y el comercial.
+      Sin JS la pagina se queda en 'residential', que es el estado por
+      defecto acordado cuando no hay eleccion.
+    */}
+    <script is:inline>
+      (function () {
+        try {
+          var s = localStorage.getItem('sc-segment');
+          if (s === 'residential' || s === 'commercial') {
+            document.documentElement.dataset.segment = s;
+            document.documentElement.dataset.segmentChosen = 'true';
+          }
+          if (sessionStorage.getItem('sc-selector-dismissed') === 'true') {
+            document.documentElement.dataset.selectorDismissed = 'true';
+          }
+        } catch (e) {
+          /* Modo privado o storage bloqueado: se sigue con el defecto. */
+        }
+      })();
+    </script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <MobileContactBar />
+    {showSelector && <AudienceSelector />}
+  </body>
+</html>

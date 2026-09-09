@@ -1,0 +1,80 @@
+---
+import SectionLabel from './SectionLabel.astro';
+import { processSteps } from '../data/process';
+---
+
+<section class="section process" id="process">
+  <div class="shell">
+    <SectionLabel label="The StoneCraft Experience" />
+
+    <ol class="process__list">
+      {
+        processSteps.map((step) => (
+          <li class="process__item">
+            <p class="process__number t-accent">{step.number}</p>
+            <h3 class="t-label process__title">{step.title}</h3>
+            <p class="process__description">{step.description}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .process__list {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: none;
+  }
+
+  .process__item {
+    position: relative;
+  }
+
+  /* Warm Taupe en numeros de 40px+: uso permitido como titular grande. */
+  .process__number {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(2.25rem, 1.6rem + 2vw, 3rem);
+    line-height: 1;
+    margin: 0 0 1.25rem;
+  }
+
+  .process__title {
+    margin: 0 0 0.75rem;
+  }
+
+  .process__description {
+    margin: 0;
+    font-size: 0.9375rem;
+    max-width: 28ch;
+    color: var(--color-charcoal);
+  }
+
+  @media (min-width: 40rem) {
+    .process__list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 62rem) {
+    .process__list {
+      grid-template-columns: repeat(5, 1fr);
+    }
+
+    /* Flecha de continuidad entre pasos, patron del boceto. */
+    .process__item + .process__item::before {
+      content: '';
+      position: absolute;
+      top: 1.25rem;
+      left: -1.5rem;
+      width: 1rem;
+      height: 1px;
+      background-color: color-mix(in srgb, var(--color-charcoal) 40%, transparent);
+    }
+  }
+</style>

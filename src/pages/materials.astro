@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import MaterialsSection from '../components/MaterialsSection.astro';
+import ContactCTA from '../components/ContactCTA.astro';
+---
+
+<Base
+  title="Materials"
+  description="Explore trusted manufacturers and find the perfect style for your project."
+>
+  <PageHeader
+    eyebrow="Premium brands"
+    title="The Material Library"
+    lead="Explore trusted manufacturers and find the perfect style for your project."
+  />
+  <MaterialsSection showLink={false} />
+  <ContactCTA />
+</Base>

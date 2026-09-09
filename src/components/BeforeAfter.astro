@@ -1,0 +1,183 @@
+---
+import SectionLabel from './SectionLabel.astro';
+import MediaSlot from './MediaSlot.astro';
+
+/**
+ * Before & After.
+ *
+ * El control es un <input type="range"> real: teclado, lector de pantalla y
+ * arrastre funcionan sin escribir nada a mano. Sin JS la comparativa se
+ * queda al 50% y las dos mitades siguen siendo visibles: degrada bien.
+ *
+ * Los pares de fotos estan PENDIENTES (decision 1).
+ */
+---
+
+<section class="section surface-dark on-dark" id="before-after">
+  <div class="shell ba__grid">
+    <div class="ba__text">
+      <SectionLabel label="Real transformations" />
+      <h2 class="t-h1 ba__title">Before &amp; After</h2>
+      <p class="ba__body">
+        See how we turn ordinary spaces into exceptional outdoor living environments.
+      </p>
+      <a href="/projects" class="btn btn-primary">View Projects</a>
+    </div>
+
+    <figure class="ba__figure">
+      <div class="ba__viewer" id="ba-viewer">
+        <div class="ba__layer ba__layer--after">
+          <MediaSlot ratio="16 / 10" label="Driveway transformation: AFTER photograph" />
+          <span class="t-label ba__tag ba__tag--after">After</span>
+        </div>
+
+        <div class="ba__layer ba__layer--before">
+          <MediaSlot ratio="16 / 10" label="Driveway transformation: BEFORE photograph" />
+          <span class="t-label ba__tag ba__tag--before">Before</span>
+        </div>
+
+        <span class="ba__handle" aria-hidden="true"></span>
+
+        <label class="ba__control">
+          <span class="sr-only">Reveal before and after. Drag or use the arrow keys.</span>
+          <input type="range" min="0" max="100" value="50" step="1" id="ba-range" />
+        </label>
+      </div>
+      <figcaption class="sr-only">
+        Comparison slider between the before and after state of a completed project.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<script>
+  const viewer = document.getElementById('ba-viewer');
+  const range = document.getElementById('ba-range');
+
+  if (viewer instanceof HTMLElement && range instanceof HTMLInputElement) {
+    const update = () => viewer.style.setProperty('--split', `${range.value}%`);
+    range.addEventListener('input', update);
+    update();
+  }
+</script>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .ba__grid {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  .ba__title {
+    margin: 0 0 1.25rem;
+  }
+
+  .ba__body {
+    margin: 0 0 2rem;
+    max-width: 34ch;
+    color: color-mix(in srgb, var(--color-warm-cream) 82%, transparent);
+  }
+
+  .ba__figure {
+    margin: 0;
+  }
+
+  .ba__viewer {
+    --split: 50%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ba__layer {
+    position: relative;
+  }
+
+  .ba__layer--before {
+    position: absolute;
+    inset: 0;
+    /* La capa "before" se recorta hasta la posicion del control. */
+    clip-path: inset(0 calc(100% - var(--split)) 0 0);
+  }
+
+  .ba__tag {
+    position: absolute;
+    bottom: 1rem;
+    color: var(--color-warm-cream);
+    background-color: color-mix(in srgb, var(--color-rich-black) 70%, transparent);
+    padding: 0.4rem 0.75rem;
+  }
+
+  .ba__tag--before {
+    left: 1rem;
+  }
+
+  .ba__tag--after {
+    right: 1rem;
+  }
+
+  .ba__handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--split);
+    width: 2px;
+    background-color: var(--color-warm-cream);
+    transform: translateX(-1px);
+  }
+
+  .ba__control {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .ba__control input[type='range'] {
+    width: 100%;
+    margin: 0;
+    background: transparent;
+    cursor: ew-resize;
+    appearance: none;
+  }
+
+  .ba__control input[type='range']::-webkit-slider-thumb {
+    appearance: none;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background-color: var(--color-warm-cream);
+    border: 1px solid var(--color-rich-black);
+    cursor: ew-resize;
+  }
+
+  .ba__control input[type='range']::-moz-range-thumb {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background-color: var(--color-warm-cream);
+    border: 1px solid var(--color-rich-black);
+    cursor: ew-resize;
+  }
+
+  .ba__control input[type='range']:focus-visible {
+    outline: 2px solid var(--color-warm-cream);
+    outline-offset: 4px;
+  }
+
+  @media (min-width: 62rem) {
+    .ba__grid {
+      grid-template-columns: 0.8fr 1.2fr;
+    }
+  }
+</style>

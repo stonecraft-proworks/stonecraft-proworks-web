@@ -1,0 +1,261 @@
+---
+import Logo from './Logo.astro';
+import { nav, site } from '../data/site';
+
+const current = Astro.url.pathname;
+const isCurrent = (href: string) =>
+  href === '/' ? current === '/' : current.startsWith(href);
+---
+
+<header class="header">
+  <div class="shell header__inner">
+    <a href="/" class="header__logo" aria-label={`${site.name} — home`}>
+      <Logo lockup="horizontal-compact" variant="color" width={172} />
+    </a>
+
+    <nav class="header__nav" aria-label="Main">
+      <ul class="header__list">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="header__link"
+                aria-current={isCurrent(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="header__actions">
+      <p class="header__motto">Outdoor Living<br />for a Better Tomorrow</p>
+      <a href="/contact" class="btn btn-solid header__cta">Start Your Project</a>
+
+      <button
+        type="button"
+        class="header__toggle"
+        id="nav-toggle"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+      >
+        <span class="sr-only">Menu</span>
+        <span class="header__bars" aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="header__mobile" id="mobile-nav" hidden>
+    <nav class="shell" aria-label="Main, mobile">
+      <ul class="header__mobile-list">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="header__mobile-link"
+                aria-current={isCurrent(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a href="/contact" class="btn btn-solid header__mobile-cta">Start Your Project</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('nav-toggle');
+  const panel = document.getElementById('mobile-nav');
+
+  if (toggle && panel) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      panel.hidden = !open;
+    };
+
+    toggle.addEventListener('click', () => {
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+
+    // Escape cierra y devuelve el foco al boton que lo abrio.
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background-color: var(--color-warm-cream);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-charcoal) 14%, transparent);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding-block: 1rem;
+  }
+
+  /* Clear space: el aire minimo alrededor del logo equivale a la altura de
+     la "S". Se reserva con padding para que nada lo invada. */
+  .header__logo {
+    display: inline-flex;
+    padding: 0.5rem 0.75rem 0.5rem 0;
+    flex-shrink: 0;
+  }
+
+  .header__nav {
+    display: none;
+  }
+
+  .header__list {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 2vw, 2.25rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .header__link {
+    font-size: 0.9375rem;
+    padding-block: 0.5rem;
+    border-bottom: 1px solid transparent;
+    transition: border-color 200ms ease;
+  }
+
+  .header__link:hover,
+  .header__link[aria-current='page'] {
+    border-bottom-color: var(--color-rich-black);
+  }
+
+  .header__actions {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .header__motto {
+    display: none;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: var(--color-charcoal);
+    padding-left: 1.25rem;
+    border-left: 1px solid color-mix(in srgb, var(--color-charcoal) 25%, transparent);
+    margin: 0;
+    order: 2;
+  }
+
+  .header__cta {
+    display: none;
+  }
+
+  .header__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    background: none;
+    border: 1px solid color-mix(in srgb, var(--color-charcoal) 25%, transparent);
+    cursor: pointer;
+  }
+
+  .header__bars,
+  .header__bars::before,
+  .header__bars::after {
+    display: block;
+    width: 20px;
+    height: 1.5px;
+    background-color: var(--color-rich-black);
+  }
+
+  .header__bars {
+    position: relative;
+  }
+
+  .header__bars::before,
+  .header__bars::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+
+  .header__bars::before {
+    top: -6px;
+  }
+
+  .header__bars::after {
+    top: 6px;
+  }
+
+  .header__mobile {
+    border-top: 1px solid color-mix(in srgb, var(--color-charcoal) 14%, transparent);
+    padding-block: 1.5rem 2rem;
+  }
+
+  .header__mobile-list {
+    list-style: none;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .header__mobile-link {
+    display: block;
+    padding: 0.875rem 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.25rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-charcoal) 10%, transparent);
+  }
+
+  .header__mobile-cta {
+    width: 100%;
+  }
+
+  @media (min-width: 64rem) {
+    .header__nav,
+    .header__cta {
+      display: flex;
+    }
+
+    .header__toggle,
+    .header__mobile {
+      display: none;
+    }
+  }
+
+  @media (min-width: 82rem) {
+    .header__motto {
+      display: block;
+    }
+  }
+</style>

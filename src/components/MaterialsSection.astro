@@ -1,0 +1,84 @@
+---
+import SectionLabel from './SectionLabel.astro';
+import MediaSlot from './MediaSlot.astro';
+
+/**
+ * The Material Library. Titular y bajada literales del boceto.
+ *
+ * Las cuatro marcas de fabricante del boceto (Tremron, Belgard, Artistic
+ * Pavers, Flagstone) NO se reproducen: son marcas registradas de terceros,
+ * no hay archivos en el kit y falta confirmacion de distribucion autorizada
+ * (decision 12, pendiente). En su lugar quedan huecos marcados con la
+ * proporcion final. Cuando el cliente confirme autorizacion y entregue los
+ * logotipos, se sustituyen sin tocar el layout.
+ */
+interface Props {
+  showLink?: boolean;
+}
+
+const { showLink = true } = Astro.props;
+
+const slots = ['Manufacturer 1', 'Manufacturer 2', 'Manufacturer 3', 'Manufacturer 4'];
+---
+
+<section class="section surface-sand" id="materials">
+  <div class="shell">
+    <SectionLabel
+      label="Premium brands"
+      linkLabel={showLink ? 'Explore all materials' : undefined}
+      linkHref={showLink ? '/materials' : undefined}
+    />
+
+    <div class="materials__intro">
+      <h2 class="t-h1">The Material Library</h2>
+      <p class="measure materials__lead">
+        Explore trusted manufacturers and find the perfect style for your project.
+      </p>
+    </div>
+
+    <ul class="materials__grid">
+      {
+        slots.map((slot) => (
+          <li class="materials__item">
+            <MediaSlot
+              ratio="3 / 2"
+              label={`${slot}: authorised logo + material swatch (pending approval)`}
+            />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .materials__intro {
+    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+  }
+
+  .materials__lead {
+    margin: 1rem 0 0;
+    color: var(--color-charcoal);
+  }
+
+  .materials__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 40rem) {
+    .materials__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 62rem) {
+    .materials__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>

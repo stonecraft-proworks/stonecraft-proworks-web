@@ -1,0 +1,137 @@
+---
+import Logo from './Logo.astro';
+import { nav, site } from '../data/site';
+
+/**
+ * Las URLs de redes estan PENDIENTES (decision 2). Se listan solo las que
+ * ya tengan URL real: no se pintan iconos que no llevan a ninguna parte.
+ */
+const socials = Object.entries(site.social).filter(([, url]) => url !== null) as [string, string][];
+const year = new Date().getFullYear();
+---
+
+<footer class="footer surface-dark on-dark">
+  <div class="shell footer__inner">
+    <div class="footer__brand">
+      <Logo lockup="horizontal-compact" variant="white" width={190} />
+      <p class="t-label footer__tagline">Built to last,<br />crafted to impress.</p>
+    </div>
+
+    <nav class="footer__nav" aria-label="Footer">
+      <h2 class="t-label footer__heading">Explore</h2>
+      <ul class="footer__list">
+        {nav.map((item) => <li><a href={item.href} class="footer__link">{item.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="footer__contact">
+      <h2 class="t-label footer__heading">Contact</h2>
+      <ul class="footer__list">
+        <li><a href={`mailto:${site.email}`} class="footer__link">{site.email}</a></li>
+        {
+          site.phone && (
+            <li>
+              <a href={`tel:${site.phone}`} class="footer__link">
+                {site.phone}
+              </a>
+            </li>
+          )
+        }
+        <li class="footer__meta">{site.serviceArea}</li>
+        {site.licensed && <li class="footer__meta">Licensed &amp; Insured</li>}
+      </ul>
+
+      {
+        socials.length > 0 && (
+          <ul class="footer__list footer__social">
+            {socials.map(([name, url]) => (
+              <li>
+                <a href={url} class="footer__link" rel="me noopener">
+                  {name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </div>
+
+  <div class="shell footer__bar">
+    <p>&copy; {year} {site.name}. All rights reserved.</p>
+    <p>{site.domain}</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding-block: var(--spacing-section) 0;
+  }
+
+  .footer__inner {
+    display: grid;
+    gap: 3rem;
+    padding-bottom: 3.5rem;
+  }
+
+  .footer__tagline {
+    margin: 1.75rem 0 0;
+    color: var(--color-sandstone);
+  }
+
+  .footer__heading {
+    margin: 0 0 1.25rem;
+    color: var(--color-sandstone);
+  }
+
+  .footer__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .footer__link {
+    border-bottom: 1px solid transparent;
+    transition: border-color 200ms ease;
+  }
+
+  .footer__link:hover {
+    border-bottom-color: currentColor;
+  }
+
+  .footer__meta {
+    color: color-mix(in srgb, var(--color-warm-cream) 72%, transparent);
+  }
+
+  .footer__social {
+    margin-top: 1.5rem;
+    grid-auto-flow: column;
+    justify-content: start;
+    gap: 1.25rem;
+    text-transform: capitalize;
+  }
+
+  .footer__bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-block: 1.75rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-warm-cream) 18%, transparent);
+    font-size: 0.8125rem;
+    color: color-mix(in srgb, var(--color-warm-cream) 70%, transparent);
+  }
+
+  .footer__bar p {
+    margin: 0;
+  }
+
+  @media (min-width: 48rem) {
+    .footer__inner {
+      grid-template-columns: 1.4fr 1fr 1.2fr;
+      gap: 4rem;
+    }
+  }
+</style>

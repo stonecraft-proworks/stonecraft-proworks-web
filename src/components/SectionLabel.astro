@@ -1,0 +1,55 @@
+---
+/** Etiqueta de seccion con filete y enlace opcional. Patron del boceto. */
+interface Props {
+  label: string;
+  linkLabel?: string;
+  linkHref?: string;
+}
+
+const { label, linkLabel, linkHref } = Astro.props;
+---
+
+<div class="section-label">
+  <p class="t-label section-label__text">{label}</p>
+  <span class="section-label__rule" aria-hidden="true"></span>
+  {
+    linkLabel && linkHref && (
+      <a href={linkHref} class="link-arrow section-label__link">
+        {linkLabel}
+        <span aria-hidden="true">&rarr;</span>
+      </a>
+    )
+  }
+</div>
+
+<style>
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  .section-label__text {
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  .section-label__rule {
+    flex: 1;
+    height: 1px;
+    background-color: currentColor;
+    opacity: 0.25;
+  }
+
+  .section-label__link {
+    flex-shrink: 0;
+    display: none;
+  }
+
+  @media (min-width: 48rem) {
+    .section-label__link {
+      display: inline-flex;
+    }
+  }
+</style>

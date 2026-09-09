@@ -1,0 +1,301 @@
+/* ==========================================================================
+   StoneCraft ProWorks - sistema base
+   Tokens portados de 01_Brand/07-Color-Palette y de las Brand Guidelines v1.0.
+   Las guidelines mandan sobre el boceto en todo lo tipografico y cromatico.
+   ========================================================================== */
+
+@import 'tailwindcss';
+
+@import '@fontsource/poppins/300.css';
+@import '@fontsource/poppins/500.css';
+@import '@fontsource/poppins/700.css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/600.css';
+
+@theme {
+  /* --- Paleta (5 colores, un trabajo cada uno) --------------------------- */
+  --color-rich-black: #1a1a1a;
+  --color-charcoal: #333333;
+  --color-warm-taupe: #a59278;
+  --color-sandstone: #c8b89a;
+  --color-warm-cream: #f6f2e6;
+
+  /* --- Familias --------------------------------------------------------- */
+  /* Poppins construye la voz de marca; Inter carga la lectura larga. */
+  --font-display: 'Poppins', 'Century Gothic', Futura, system-ui, sans-serif;
+  --font-body: 'Inter', 'Poppins', 'Segoe UI', system-ui, sans-serif;
+
+  /* --- Escala tipografica (guidelines p.12) ----------------------------- */
+  --text-h1: clamp(2.5rem, 1.6rem + 3.6vw, 4rem); /* 40 -> 64 px */
+  --text-h2: clamp(1.5rem, 1.2rem + 1.2vw, 2rem); /* 24 -> 32 px */
+  --text-h3: clamp(1.125rem, 1rem + 0.5vw, 1.375rem); /* 18 -> 22 px */
+  --text-body: clamp(1rem, 0.95rem + 0.2vw, 1.125rem); /* 16 -> 18 px */
+  --text-label: clamp(0.75rem, 0.72rem + 0.12vw, 0.875rem); /* 12 -> 14 px */
+
+  /* --- Ritmo vertical --------------------------------------------------- */
+  --spacing-section: clamp(4rem, 2rem + 8vw, 9rem);
+  --spacing-gutter: clamp(1.25rem, 0.5rem + 3vw, 4rem);
+}
+
+@layer base {
+  /*
+   * Distribucion cromatica objetivo (guidelines p.09):
+   * 60% Warm Cream - 20% Rich Black - 12% Warm Taupe - 5% Sandstone - 3% Charcoal.
+   * Warm Cream carga la pagina; Rich Black la ancla; Warm Taupe es acento.
+   */
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-warm-cream);
+    color: var(--color-rich-black);
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: 1.6; /* guidelines: 1.55 - 1.65 */
+    text-align: left; /* la marca no usa texto justificado */
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  /* Foco visible en todo elemento interactivo. Nunca se elimina sin
+     reemplazo: aqui se refuerza. */
+  :focus-visible {
+    outline: 2px solid var(--color-rich-black);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Sobre fondos oscuros el anillo negro desaparece: se invierte. */
+  .on-dark :focus-visible {
+    outline-color: var(--color-warm-cream);
+  }
+
+  ::selection {
+    background-color: var(--color-sandstone);
+    color: var(--color-rich-black);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* --- Contenedor editorial -------------------------------------------- */
+  .shell {
+    width: 100%;
+    max-width: 90rem;
+    margin-inline: auto;
+    padding-inline: var(--spacing-gutter);
+  }
+
+  /* Medida de lectura: 60-78 caracteres. El cuerpo nunca ocupa el ancho
+     completo de la pagina. */
+  .measure {
+    max-width: 68ch;
+  }
+
+  .section {
+    padding-block: var(--spacing-section);
+  }
+
+  /* --- Tipografia ------------------------------------------------------- */
+  .t-h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-h1);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+
+  .t-h2 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--text-h2);
+    line-height: 1.2;
+  }
+
+  .t-h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--text-h3);
+    line-height: 1.3;
+  }
+
+  /* Mayusculas solo en etiquetas cortas, siempre con tracking 0.10-0.24em. */
+  .t-label {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-label);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    line-height: 1.4;
+  }
+
+  /* Warm Taupe NO alcanza AA sobre Warm Cream en texto pequeno (2.69:1).
+     Esta clase existe solo para titulares grandes y acentos graficos.
+     Nunca aplicarla a cuerpo de texto ni a etiquetas. */
+  .t-accent {
+    color: var(--color-warm-taupe);
+  }
+
+  /* --- Botones ---------------------------------------------------------- */
+  /* Todo boton define hover, focus, active y disabled. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 3rem;
+    padding: 0.875rem 1.75rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-label);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition:
+      background-color 200ms ease,
+      color 200ms ease,
+      border-color 200ms ease,
+      transform 200ms ease;
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn:disabled,
+  .btn[aria-disabled='true'] {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Taupe con texto Rich Black = 5.78:1 -> AA. Verificado; no cambiar el
+     par de colores sin volver a medir. */
+  .btn-primary {
+    background-color: var(--color-warm-taupe);
+    color: var(--color-rich-black);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--color-sandstone);
+  }
+
+  .btn-solid {
+    background-color: var(--color-rich-black);
+    color: var(--color-warm-cream);
+  }
+
+  .btn-solid:hover:not(:disabled) {
+    background-color: var(--color-charcoal);
+  }
+
+  .btn-outline {
+    border-color: currentColor;
+    background-color: transparent;
+    color: inherit;
+  }
+
+  .btn-outline:hover:not(:disabled) {
+    background-color: var(--color-rich-black);
+    color: var(--color-warm-cream);
+  }
+
+  .on-dark .btn-outline:hover:not(:disabled) {
+    background-color: var(--color-warm-cream);
+    color: var(--color-rich-black);
+  }
+
+  /* Enlace con flecha, patron del boceto. */
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-label);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    padding-block: 0.25rem;
+    border-bottom: 1px solid currentColor;
+    transition: gap 200ms ease;
+  }
+
+  .link-arrow:hover {
+    gap: 1rem;
+  }
+
+  /* --- Filete de seccion, patron del boceto ----------------------------- */
+  .rule-label {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .rule-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: currentColor;
+    opacity: 0.28;
+  }
+
+  /* --- Superficies ------------------------------------------------------ */
+  .surface-dark {
+    background-color: var(--color-rich-black);
+    color: var(--color-warm-cream);
+  }
+
+  .surface-sand {
+    background-color: color-mix(in srgb, var(--color-sandstone) 34%, var(--color-warm-cream));
+  }
+
+  /* --- Intercambio Residential / Commercial ---------------------------- */
+  /*
+   * Las dos variantes se renderizan en el servidor; aqui se oculta la que
+   * no corresponde. Sin JS el documento se queda en 'residential', que es
+   * el estado por defecto acordado. Cero peticiones y cero parpadeo.
+   */
+  html[data-segment='residential'] [data-seg='commercial'],
+  html[data-segment='commercial'] [data-seg='residential'] {
+    display: none;
+  }
+
+  /* Salto al contenido, visible solo con teclado. */
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -100%;
+    z-index: 100;
+    background-color: var(--color-rich-black);
+    color: var(--color-warm-cream);
+    padding: 0.75rem 1.25rem;
+    transition: top 150ms ease;
+  }
+
+  .skip-link:focus {
+    top: 1rem;
+  }
+}

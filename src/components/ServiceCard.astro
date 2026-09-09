@@ -1,0 +1,99 @@
+---
+import MediaSlot from './MediaSlot.astro';
+import type { Service } from '../data/services';
+
+/**
+ * Tarjeta de servicio.
+ *
+ * Regla dura del brief, no negociable: el nombre y la descripcion van
+ * SIEMPRE debajo de la fotografia, nunca encima. Orden fijo:
+ * imagen -> nombre -> descripcion corta -> boton.
+ */
+interface Props {
+  service: Service;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { service, headingLevel = 'h3' } = Astro.props;
+const Heading = headingLevel;
+---
+
+<article class="service">
+  <div class="service__media">
+    <MediaSlot ratio="4 / 3" label={`${service.name}: hero photograph`} />
+  </div>
+
+  <div class="service__body">
+    <Heading class="t-h3 service__name">{service.name}</Heading>
+    <p class="service__description">{service.description}</p>
+
+    <a href={`/services#${service.slug}`} class="service__cta">
+      <span class="service__arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M4 12h15M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </span>
+      <span class="t-label">Explore Service</span>
+    </a>
+  </div>
+</article>
+
+<style>
+  .service {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .service__media {
+    margin-bottom: 1.75rem;
+  }
+
+  .service__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .service__name {
+    margin: 0 0 0.75rem;
+  }
+
+  .service__description {
+    margin: 0 0 1.5rem;
+    max-width: 46ch;
+    color: var(--color-charcoal);
+  }
+
+  .service__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.4rem 0.4rem 0.4rem 0;
+    margin-top: auto;
+  }
+
+  .service__arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid color-mix(in srgb, var(--color-charcoal) 35%, transparent);
+    border-radius: 50%;
+    transition:
+      background-color 200ms ease,
+      color 200ms ease,
+      border-color 200ms ease;
+  }
+
+  .service__arrow svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .service__cta:hover .service__arrow {
+    background-color: var(--color-rich-black);
+    border-color: var(--color-rich-black);
+    color: var(--color-warm-cream);
+  }
+</style>

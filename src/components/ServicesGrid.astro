@@ -1,0 +1,102 @@
+---
+import SectionLabel from './SectionLabel.astro';
+import ServiceCard from './ServiceCard.astro';
+import { segments } from '../data/segments';
+import { services, serviceBySlug } from '../data/services';
+
+/**
+ * Rejilla de servicios de portada.
+ *
+ * Estructura por el BRIEF (2 por fila en escritorio, 1 en movil, 6 servicios
+ * con aire entre ellos); lenguaje visual por el BOCETO (etiqueta con filete,
+ * "view all services", flecha circular). No se replica la fila densa de 4
+ * tarjetas del boceto: el propio brief la descarta y la seleccion de 6
+ * servicios la contradice.
+ *
+ * Se renderizan los dos segmentos y el CSS oculta el que no toca.
+ */
+interface Props {
+  /** Cuando es true muestra los 8 servicios sin segmentar (pagina /services). */
+  showAll?: boolean;
+}
+
+const { showAll = false } = Astro.props;
+---
+
+<section class="section" id="services">
+  <div class="shell">
+    <SectionLabel
+      label="Our Services"
+      linkLabel={showAll ? undefined : 'View all services'}
+      linkHref={showAll ? undefined : '/services'}
+    />
+
+    <div class="services__intro">
+      <h2 class="t-h2">Explore Our Outdoor Construction Services</h2>
+      <p class="measure services__lead">
+        Thoughtfully designed outdoor solutions combining premium materials, precise
+        craftsmanship and professional execution.
+      </p>
+    </div>
+
+    {
+      showAll ? (
+        <div class="services__grid">
+          {services.map((service) => (
+            <ServiceCard service={service} headingLevel="h3" />
+          ))}
+        </div>
+      ) : (
+        segments.map((segment) => (
+          <div class="services__grid" data-seg={segment.id}>
+            {segment.homeServices.map((slug) => {
+              const service = serviceBySlug(slug);
+              return service ? <ServiceCard service={service} headingLevel="h3" /> : null;
+            })}
+          </div>
+        ))
+      )
+    }
+
+    {
+      !showAll && (
+        <div class="services__footer">
+          <a href="/services" class="btn btn-solid">
+            Explore All Services
+          </a>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .services__intro {
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .services__lead {
+    margin: 1.25rem 0 0;
+    color: var(--color-charcoal);
+  }
+
+  /* 1 por fila en movil, 2 por fila desde tablet. El espacio generoso entre
+     piezas es un requisito explicito del brief, no una preferencia. */
+  .services__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(3rem, 6vw, 5.5rem) clamp(2rem, 4vw, 4rem);
+  }
+
+  .services__footer {
+    margin-top: clamp(3rem, 6vw, 5rem);
+    display: flex;
+    justify-content: center;
+  }
+
+  @media (min-width: 48rem) {
+    .services__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

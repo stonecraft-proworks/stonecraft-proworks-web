@@ -1,0 +1,89 @@
+---
+import MediaSlot from './MediaSlot.astro';
+
+/** Copy literal del boceto (decision 6: la informacion la manda el boceto). */
+---
+
+<section class="section intro">
+  <div class="shell intro__grid">
+    <div class="intro__text">
+      <p class="t-label intro__eyebrow">More than pavers</p>
+      <h2 class="t-h1 intro__title">We create extraordinary outdoor spaces.</h2>
+      <p class="intro__body">
+        StoneCraft ProWorks combines design, premium materials and expert craftsmanship to
+        transform properties into lasting outdoor experiences.
+      </p>
+      <a href="/about" class="link-arrow">
+        Our story
+        <span aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+
+    <div class="intro__media">
+      <MediaSlot ratio="4 / 5" label="Entryway or facade: signature architectural photograph" />
+    </div>
+
+    <aside class="intro__aside surface-sand">
+      <p class="t-label intro__steps">Design.<br />Build.<br />Restore.<br />Enjoy.</p>
+      <hr class="intro__rule" />
+      <p class="t-label intro__motto">Spaces<br />that bring<br />people together.</p>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .intro__grid {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  .intro__eyebrow {
+    margin: 0 0 1.5rem;
+    color: var(--color-charcoal);
+  }
+
+  .intro__title {
+    margin: 0 0 1.75rem;
+    max-width: 14ch;
+  }
+
+  .intro__body {
+    margin: 0 0 2rem;
+    max-width: 46ch;
+    color: var(--color-charcoal);
+  }
+
+  .intro__aside {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2rem;
+    padding: clamp(2rem, 4vw, 3rem);
+    height: 100%;
+  }
+
+  .intro__steps,
+  .intro__motto {
+    margin: 0;
+    line-height: 2;
+  }
+
+  .intro__motto {
+    color: var(--color-charcoal);
+  }
+
+  .intro__rule {
+    width: 4rem;
+    height: 1px;
+    margin: 0;
+    border: 0;
+    background-color: var(--color-warm-taupe);
+  }
+
+  @media (min-width: 62rem) {
+    .intro__grid {
+      grid-template-columns: 1fr 1fr 0.7fr;
+    }
+  }
+</style>

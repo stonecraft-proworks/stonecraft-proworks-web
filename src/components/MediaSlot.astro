@@ -1,0 +1,57 @@
+---
+/**
+ * Hueco de imagen o video PENDIENTE de entrega (decision 1).
+ *
+ * Se renderiza tambien en produccion, a proposito: un hueco marcado es
+ * honesto, una caja vacia o una foto de stock inventada no lo son. Cuando
+ * llegue el asset real se sustituye el uso de este componente por un <img>
+ * o un <video>; el layout y la proporcion ya son los definitivos.
+ */
+
+interface Props {
+  /** Que asset falta exactamente. Sirve de checklist para el cliente. */
+  label: string;
+  /** Proporcion CSS, ej. '3 / 2'. */
+  ratio?: string;
+  kind?: 'image' | 'video';
+  class?: string;
+}
+
+const { label, ratio = '3 / 2', kind = 'image', class: className = '' } = Astro.props;
+---
+
+<div
+  class={`media-slot ${className}`}
+  style={`aspect-ratio:${ratio}`}
+  role="img"
+  aria-label={`Pending ${kind}: ${label}`}
+>
+  <span class="media-slot__kind t-label">{kind === 'video' ? 'Video' : 'Image'}</span>
+  <span class="media-slot__label">{label}</span>
+</div>
+
+<style>
+  .media-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 1.5rem;
+    text-align: center;
+    background-color: color-mix(in srgb, var(--color-sandstone) 26%, var(--color-warm-cream));
+    border: 1px dashed color-mix(in srgb, var(--color-warm-taupe) 70%, transparent);
+    color: var(--color-charcoal);
+  }
+
+  .media-slot__kind {
+    opacity: 0.7;
+  }
+
+  .media-slot__label {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    max-width: 34ch;
+  }
+</style>

@@ -1,0 +1,262 @@
+---
+import MediaSlot from './MediaSlot.astro';
+import { segments } from '../data/segments';
+import { site } from '../data/site';
+
+/**
+ * Portada. Copy del boceto (decision 6), tipografia de las guidelines
+ * (decision 8): Poppins, nunca la serif del boceto.
+ *
+ * El video es PENDIENTE (decision 1). El marcado definitivo ya esta escrito
+ * y comentado abajo: cuando lleguen los archivos se cambia el <MediaSlot>
+ * por el <video> y no hay que tocar nada mas. Especificacion del brief:
+ * autoplay, muted, loop, playsinline, poster elegante, corte mas corto y
+ * ligero en movil, y degradado oscuro para que el texto se lea.
+ */
+---
+
+<section class="hero on-dark">
+  <div class="hero__media">
+    {
+      segments.map((segment) => (
+        <div class="hero__media-layer" data-seg={segment.id}>
+          <MediaSlot
+            kind="video"
+            ratio="16 / 9"
+            class="hero__slot"
+            label={`Hero ${segment.label.toLowerCase()}: cinematic loop (desktop + short mobile cut) with poster frame`}
+          />
+        </div>
+      ))
+    }
+    {/*
+      Marcado final, pendiente de assets:
+
+      <video class="hero__video" autoplay muted loop playsinline
+             poster="/media/hero-residential-poster.jpg">
+        <source src="/media/hero-residential-mobile.mp4" media="(max-width: 47.99rem)" type="video/mp4" />
+        <source src="/media/hero-residential.mp4" type="video/mp4" />
+      </video>
+
+      Con prefers-reduced-motion se sirve solo el poster (ver .hero__video
+      en los estilos de abajo).
+    */}
+    <div class="hero__scrim" aria-hidden="true"></div>
+  </div>
+
+  <div class="shell hero__content">
+    <p class="t-label hero__eyebrow">Timeless spaces for a brighter tomorrow</p>
+    <h1 class="t-h1 hero__title">Outdoor Living<br />Elevated.</h1>
+    <p class="t-label hero__tagline">Built to last, crafted to impress.</p>
+
+    <div class="hero__actions">
+      <a href="/contact" class="btn btn-primary">Start Your Project</a>
+      <a href="/projects" class="btn btn-outline">Explore Our Work</a>
+
+      {/* "Watch Our Story" confirmado (decision 13); el video sigue pendiente. */}
+      <a href="/about#story" class="hero__story">
+        <span class="hero__play" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 7l9 5-9 5z" /></svg>
+        </span>
+        <span class="t-label">Watch Our Story</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="hero__bar">
+    <div class="shell hero__bar-inner">
+      <div class="hero__segments" role="group" aria-label="Choose project type">
+        {
+          segments.map((segment) => (
+            <button
+              type="button"
+              class="hero__segment t-label"
+              data-segment-choice={segment.id}
+              data-segment-button={segment.id}
+            >
+              {segment.label}
+            </button>
+          ))
+        }
+      </div>
+
+      <p class="t-label hero__location">
+        <span aria-hidden="true" class="hero__pin">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 21s7-5.5 7-11a7 7 0 10-14 0c0 5.5 7 11 7 11z" />
+            <circle cx="12" cy="10" r="2.5" />
+          </svg>
+        </span>
+        {site.region}
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { bindSegmentChoices } from '../scripts/segment';
+
+  const bar = document.querySelector('.hero__segments');
+  if (bar) bindSegmentChoices(bar);
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    background-color: var(--color-rich-black);
+    color: var(--color-warm-cream);
+    isolation: isolate;
+  }
+
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+  }
+
+  .hero__media-layer,
+  .hero__slot,
+  .hero__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Con movimiento reducido no se reproduce el video: queda el poster. */
+  @media (prefers-reduced-motion: reduce) {
+    .hero__video {
+      display: none;
+    }
+  }
+
+  /* Degradado sutil para que el texto se lea sobre la imagen (brief). */
+  .hero__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      100deg,
+      color-mix(in srgb, var(--color-rich-black) 82%, transparent) 0%,
+      color-mix(in srgb, var(--color-rich-black) 55%, transparent) 45%,
+      color-mix(in srgb, var(--color-rich-black) 25%, transparent) 100%
+    );
+  }
+
+  .hero__content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: clamp(32rem, 78vh, 46rem);
+    padding-block: clamp(4rem, 12vh, 8rem);
+  }
+
+  .hero__eyebrow {
+    margin: 0 0 1.5rem;
+    color: var(--color-sandstone);
+  }
+
+  .hero__title {
+    margin: 0 0 1.5rem;
+    max-width: 16ch;
+  }
+
+  .hero__tagline {
+    margin: 0 0 2.5rem;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .hero__story {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.5rem;
+  }
+
+  .hero__play {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    transition: background-color 200ms ease, color 200ms ease;
+  }
+
+  .hero__play svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .hero__story:hover .hero__play {
+    background-color: var(--color-warm-cream);
+    color: var(--color-rich-black);
+  }
+
+  .hero__bar {
+    border-top: 1px solid color-mix(in srgb, var(--color-warm-cream) 22%, transparent);
+    background-color: color-mix(in srgb, var(--color-rich-black) 55%, transparent);
+  }
+
+  .hero__bar-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.5rem;
+  }
+
+  .hero__segments {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .hero__segment {
+    background: none;
+    border: none;
+    color: inherit;
+    padding: 1rem 1.25rem 1rem 0;
+    margin-right: 1.25rem;
+    cursor: pointer;
+    opacity: 0.7;
+    border-bottom: 2px solid transparent;
+    transition: opacity 200ms ease, border-color 200ms ease;
+  }
+
+  .hero__segment + .hero__segment {
+    padding-left: 1.25rem;
+    border-left: 1px solid color-mix(in srgb, var(--color-warm-cream) 25%, transparent);
+  }
+
+  .hero__segment:hover {
+    opacity: 1;
+  }
+
+  /* El segmento activo se marca sin JS extra: lo dice el atributo del <html>. */
+  :global(html[data-segment='residential']) .hero__segment[data-segment-button='residential'],
+  :global(html[data-segment='commercial']) .hero__segment[data-segment-button='commercial'] {
+    opacity: 1;
+    border-bottom-color: var(--color-warm-taupe);
+  }
+
+  .hero__location {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0;
+    color: var(--color-sandstone);
+  }
+
+  .hero__pin svg {
+    width: 16px;
+    height: 16px;
+  }
+</style>
