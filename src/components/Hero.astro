@@ -116,11 +116,18 @@ import { site } from '../data/site';
   }
 
   .hero__media-layer,
-  .hero__slot,
   .hero__video {
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  /* El hueco pendiente cubre el alto del hero igual que hara el video con
+     object-fit: cover. :global porque la raiz de MediaSlot es otro
+     componente y no lleva el scope de este. */
+  .hero__media-layer :global(.media-slot) {
+    height: 100%;
+    aspect-ratio: auto;
   }
 
   /* Con movimiento reducido no se reproduce el video: queda el poster. */
@@ -200,9 +207,15 @@ import { site } from '../data/site';
     color: var(--color-rich-black);
   }
 
+  /*
+   * Fondo SOLIDO, no semitransparente. Con el 55% de opacidad el color del
+   * video se colaba y el contraste de la franja dependia del fotograma:
+   * medido daba 3.48:1 en los botones y 2:1 en la ubicacion. Sobre negro
+   * solido los dos superan AA pase lo que pase en el video.
+   */
   .hero__bar {
     border-top: 1px solid color-mix(in srgb, var(--color-warm-cream) 22%, transparent);
-    background-color: color-mix(in srgb, var(--color-rich-black) 55%, transparent);
+    background-color: var(--color-rich-black);
   }
 
   .hero__bar-inner {
@@ -226,7 +239,7 @@ import { site } from '../data/site';
     padding: 1rem 1.25rem 1rem 0;
     margin-right: 1.25rem;
     cursor: pointer;
-    opacity: 0.7;
+    opacity: 0.82; /* por debajo de esto el segmento inactivo no llega a AA */
     border-bottom: 2px solid transparent;
     transition: opacity 200ms ease, border-color 200ms ease;
   }

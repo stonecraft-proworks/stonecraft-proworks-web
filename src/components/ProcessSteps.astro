@@ -11,7 +11,7 @@ import { processSteps } from '../data/process';
       {
         processSteps.map((step) => (
           <li class="process__item">
-            <p class="process__number t-accent">{step.number}</p>
+            <p class="process__number">{step.number}</p>
             <h3 class="t-label process__title">{step.title}</h3>
             <p class="process__description">{step.description}</p>
           </li>
@@ -35,10 +35,17 @@ import { processSteps } from '../data/process';
     position: relative;
   }
 
-  /* Warm Taupe en numeros de 40px+: uso permitido como titular grande. */
+  /*
+   * Los numeros van en Charcoal, no en Warm Taupe.
+   * Warm Taupe sobre Warm Cream mide 2.69:1: se queda por debajo incluso
+   * del minimo de 3:1 para texto grande, y estos numeros son informacion
+   * (el orden de los pasos), no decoracion. Charcoal da 11.3:1 y ademas se
+   * acerca mas al boceto, donde los numeros se ven oscuros.
+   */
   .process__number {
     font-family: var(--font-display);
     font-weight: 300;
+    color: var(--color-charcoal);
     font-size: clamp(2.25rem, 1.6rem + 2vw, 3rem);
     line-height: 1;
     margin: 0 0 1.25rem;

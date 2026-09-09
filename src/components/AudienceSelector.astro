@@ -80,11 +80,62 @@ const titleId = 'audience-selector-title';
     };
     window.addEventListener('scroll', onScroll, { passive: true });
 
+    // La capa ocupa todo el viewport, asi que se come la rueda y el gesto
+    // tactil: sin esto la pagina no se mueve y el cierre por scroll no
+    // llegaria a dispararse nunca. Se escucha el gesto en la propia capa.
+    const panel = selector.querySelector<HTMLElement>('.selector__panel');
+
+    // En pantallas muy bajas el panel si tiene scroll propio: en ese caso
+    // solo se cierra cuando ya se ha llegado a su final.
+    const panelAtBottom = () => {
+      if (!panel) return true;
+      const room = panel.scrollHeight - panel.clientHeight;
+      return room <= 1 || panel.scrollTop >= room - 1;
+    };
+
+    selector.addEventListener(
+      'wheel',
+      (event) => {
+        if (event.deltaY > 0 && panelAtBottom()) hide();
+      },
+      { passive: true },
+    );
+
+    let touchStartY = 0;
+    selector.addEventListener(
+      'touchstart',
+      (event) => {
+        touchStartY = event.touches[0]?.clientY ?? 0;
+      },
+      { passive: true },
+    );
+
+    selector.addEventListener(
+      'touchmove',
+      (event) => {
+        const y = event.touches[0]?.clientY ?? 0;
+        // El dedo sube = el contenido baja = scroll hacia abajo.
+        if (touchStartY - y > 24 && panelAtBottom()) hide();
+      },
+      { passive: true },
+    );
+
     bindSegmentChoices(selector, hide);
     closeButton?.addEventListener('click', hide);
 
+    // El atributo autofocus no es fiable (se ignora tras recargas y en
+    // algunos navegadores). Se lleva el foco a mano a la primera opcion
+    // para que quien navega con teclado entre directamente en la eleccion.
+    selector.querySelector<HTMLButtonElement>('[data-segment-choice]')?.focus();
+
+    // Escape cierra, y las teclas de scroll tambien: con la capa abierta el
+    // documento no se mueve, asi que quien navega con teclado tendria un
+    // gesto muerto si solo respondiera la rueda.
+    const SCROLL_KEYS = ['PageDown', 'ArrowDown', 'End'];
+
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && root.dataset.selectorDismissed !== 'true') hide();
+      if (root.dataset.selectorDismissed === 'true') return;
+      if (event.key === 'Escape' || SCROLL_KEYS.includes(event.key)) hide();
     });
   }
 </script>

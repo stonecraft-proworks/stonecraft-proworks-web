@@ -272,17 +272,6 @@
     background-color: color-mix(in srgb, var(--color-sandstone) 34%, var(--color-warm-cream));
   }
 
-  /* --- Intercambio Residential / Commercial ---------------------------- */
-  /*
-   * Las dos variantes se renderizan en el servidor; aqui se oculta la que
-   * no corresponde. Sin JS el documento se queda en 'residential', que es
-   * el estado por defecto acordado. Cero peticiones y cero parpadeo.
-   */
-  html[data-segment='residential'] [data-seg='commercial'],
-  html[data-segment='commercial'] [data-seg='residential'] {
-    display: none;
-  }
-
   /* Salto al contenido, visible solo con teclado. */
   .skip-link {
     position: absolute;
@@ -298,4 +287,20 @@
   .skip-link:focus {
     top: 1rem;
   }
+}
+
+/* ==========================================================================
+   Intercambio Residential / Commercial
+   Las dos variantes se renderizan en el servidor y aqui se oculta la que no
+   corresponde. Sin JS el documento se queda en 'residential', el estado por
+   defecto acordado. Cero peticiones y cero parpadeo.
+
+   IMPORTANTE: va FUERA de @layer a proposito. Los estilos scoped de los
+   componentes Astro no estan en ninguna capa, y lo no-capado siempre gana a
+   lo capado: dentro de @layer components esta regla la pisaba el
+   `display: grid` de cada componente y se veian los dos segmentos a la vez.
+   ========================================================================== */
+html[data-segment='residential'] [data-seg='commercial'],
+html[data-segment='commercial'] [data-seg='residential'] {
+  display: none;
 }
