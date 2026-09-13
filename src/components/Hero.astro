@@ -1,13 +1,18 @@
 ---
 import MediaSlot from './MediaSlot.astro';
+import AiImage from './AiImage.astro';
 import { segments } from '../data/segments';
 import { site } from '../data/site';
+import { commercialMedia } from '../data/media';
 
 /**
  * Portada. Copy del boceto (decision 6), tipografia de las guidelines
  * (decision 8): Poppins, nunca la serif del boceto.
  *
- * El video es PENDIENTE (decision 1). El marcado definitivo ya esta escrito
+ * El video residencial es PENDIENTE (decision 1). La capa comercial lleva
+ * una visualizacion IA estatica como poster (acordado 2026-09-13); si se
+ * aprueba, el loop comercial se genera a partir de esa misma imagen.
+ * El marcado definitivo del video ya esta escrito
  * y comentado abajo: cuando lleguen los archivos se cambia el <MediaSlot>
  * por el <video> y no hay que tocar nada mas. Especificacion del brief:
  * autoplay, muted, loop, playsinline, poster elegante, corte mas corto y
@@ -20,12 +25,23 @@ import { site } from '../data/site';
     {
       segments.map((segment) => (
         <div class="hero__media-layer" data-seg={segment.id}>
-          <MediaSlot
-            kind="video"
-            ratio="16 / 9"
-            class="hero__slot"
-            label={`Hero ${segment.label.toLowerCase()}: cinematic loop (desktop + short mobile cut) with poster frame`}
-          />
+          {segment.id === 'commercial' ? (
+            <AiImage
+              image={commercialMedia.hero}
+              ratio="auto"
+              class="hero__slot"
+              loading="eager"
+              sizes="100vw"
+              widths={[768, 1280, 1920, 2560]}
+            />
+          ) : (
+            <MediaSlot
+              kind="video"
+              ratio="16 / 9"
+              class="hero__slot"
+              label={`Hero ${segment.label.toLowerCase()}: cinematic loop (desktop + short mobile cut) with poster frame`}
+            />
+          )}
         </div>
       ))
     }
@@ -125,9 +141,17 @@ import { site } from '../data/site';
   /* El hueco pendiente cubre el alto del hero igual que hara el video con
      object-fit: cover. :global porque la raiz de MediaSlot es otro
      componente y no lleva el scope de este. */
-  .hero__media-layer :global(.media-slot) {
+  .hero__media-layer :global(.media-slot),
+  .hero__media-layer :global(.ai-image) {
     height: 100%;
     aspect-ratio: auto;
+  }
+
+  /* En el hero la etiqueta IA va arriba a la derecha: a la izquierda choca
+     con el texto y abajo la tapa la franja de segmentos (fondo solido). */
+  .hero__media-layer :global(.ai-image__tag) {
+    left: auto;
+    right: 0.75rem;
   }
 
   /* Con movimiento reducido no se reproduce el video: queda el poster. */

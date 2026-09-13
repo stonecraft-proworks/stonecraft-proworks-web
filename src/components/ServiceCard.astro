@@ -1,6 +1,8 @@
 ---
 import MediaSlot from './MediaSlot.astro';
+import AiImage from './AiImage.astro';
 import type { Service } from '../data/services';
+import type { MediaImage } from '../data/media';
 
 /**
  * Tarjeta de servicio.
@@ -12,15 +14,23 @@ import type { Service } from '../data/services';
 interface Props {
   service: Service;
   headingLevel?: 'h2' | 'h3';
+  /** Sin imagen se muestra el hueco pendiente (fotografia real por entregar). */
+  image?: MediaImage;
 }
 
-const { service, headingLevel = 'h3' } = Astro.props;
+const { service, headingLevel = 'h3', image } = Astro.props;
 const Heading = headingLevel;
 ---
 
 <article class="service">
   <div class="service__media">
-    <MediaSlot ratio="4 / 3" label={`${service.name}: hero photograph`} />
+    {
+      image ? (
+        <AiImage image={image} ratio="4 / 3" />
+      ) : (
+        <MediaSlot ratio="4 / 3" label={`${service.name}: hero photograph`} />
+      )
+    }
   </div>
 
   <div class="service__body">

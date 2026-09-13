@@ -3,6 +3,7 @@ import SectionLabel from './SectionLabel.astro';
 import ServiceCard from './ServiceCard.astro';
 import { segments } from '../data/segments';
 import { services, serviceBySlug } from '../data/services';
+import { commercialServiceImage } from '../data/media';
 
 /**
  * Rejilla de servicios de portada.
@@ -13,7 +14,9 @@ import { services, serviceBySlug } from '../data/services';
  * tarjetas del boceto: el propio brief la descarta y la seleccion de 6
  * servicios la contradice.
  *
- * Se renderizan los dos segmentos y el CSS oculta el que no toca.
+ * Se renderizan los dos segmentos y el CSS oculta el que no toca. El grid
+ * comercial lleva visualizaciones IA (ver data/media.ts); el residencial y
+ * la pagina /services siguen con huecos hasta recibir fotografia real.
  */
 interface Props {
   /** Cuando es true muestra los 8 servicios sin segmentar (pagina /services). */
@@ -66,7 +69,10 @@ const { showAll = false } = Astro.props;
           <div class="services__grid" data-seg={segment.id}>
             {segment.homeServices.map((slug) => {
               const service = serviceBySlug(slug);
-              return service ? <ServiceCard service={service} headingLevel="h3" /> : null;
+              if (!service) return null;
+              const image =
+                segment.id === 'commercial' ? commercialServiceImage(slug) : undefined;
+              return <ServiceCard service={service} headingLevel="h3" image={image} />;
             })}
           </div>
         ))

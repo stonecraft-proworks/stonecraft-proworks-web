@@ -1,0 +1,73 @@
+---
+import { Image } from 'astro:assets';
+import type { MediaImage } from '../data/media';
+
+/**
+ * Imagen generada con IA, marcada como tal en pantalla.
+ *
+ * La etiqueta es parte del contrato con el cliente (2026-09-13): estas
+ * visualizaciones no son obra ejecutada y no se presentan como si lo
+ * fueran. Cuando una imagen real sustituya a una de IA, se cambia este
+ * componente por <Image> a secas.
+ */
+interface Props {
+  image: MediaImage;
+  /** Proporcion CSS, ej. '4 / 3'. 'auto' para llenar el contenedor. */
+  ratio?: string;
+  sizes?: string;
+  widths?: number[];
+  loading?: 'lazy' | 'eager';
+  class?: string;
+}
+
+const {
+  image,
+  ratio = '3 / 2',
+  sizes = '(min-width: 48rem) 50vw, 100vw',
+  widths = [480, 768, 1200, 1600],
+  loading = 'lazy',
+  class: className = '',
+} = Astro.props;
+---
+
+<figure class={`ai-image ${className}`} style={`aspect-ratio:${ratio}`}>
+  <Image
+    src={image.src}
+    alt={image.alt}
+    widths={widths}
+    sizes={sizes}
+    loading={loading}
+    decoding="async"
+    class="ai-image__img"
+  />
+  <figcaption class="ai-image__tag t-label">AI visualization</figcaption>
+</figure>
+
+<style>
+  .ai-image {
+    position: relative;
+    margin: 0;
+    width: 100%;
+    overflow: hidden;
+    background-color: var(--color-sandstone);
+  }
+
+  .ai-image__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Misma receta que las etiquetas Before/After: crema sobre negro al 70%
+     mide por encima de AA sobre cualquier fotograma. */
+  .ai-image__tag {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.625rem;
+    color: var(--color-warm-cream);
+    background-color: color-mix(in srgb, var(--color-rich-black) 70%, transparent);
+  }
+</style>

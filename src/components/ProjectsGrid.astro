@@ -1,7 +1,9 @@
 ---
 import SectionLabel from './SectionLabel.astro';
 import MediaSlot from './MediaSlot.astro';
+import AiImage from './AiImage.astro';
 import { segments } from '../data/segments';
+import { commercialMedia } from '../data/media';
 
 /**
  * Galeria de proyectos.
@@ -10,6 +12,9 @@ import { segments } from '../data/segments';
  * nombres, ni ubicaciones, ni alcance. No se inventa ninguno. Queda la
  * retícula definitiva con huecos marcados, uno por segmento, para que al
  * llegar el material solo haya que rellenar los datos.
+ *
+ * Segmento comercial: visualizaciones IA con pie por TIPO de proyecto
+ * (acordado 2026-09-13). Sin nombres ni ubicaciones: no existen.
  */
 interface Props {
   showLink?: boolean;
@@ -18,6 +23,7 @@ interface Props {
 
 const { showLink = true, count = 6 } = Astro.props;
 const placeholders = Array.from({ length: count }, (_, i) => i + 1);
+const commercialProjects = commercialMedia.projects.slice(0, count);
 ---
 
 <section class="section" id="projects">
@@ -31,14 +37,25 @@ const placeholders = Array.from({ length: count }, (_, i) => i + 1);
     {
       segments.map((segment) => (
         <ul class="projects__grid" data-seg={segment.id}>
-          {placeholders.map((n) => (
-            <li class="projects__item">
-              <MediaSlot
-                ratio="3 / 2"
-                label={`${segment.label} project ${n}: photograph, name, location and scope`}
-              />
-            </li>
-          ))}
+          {segment.id === 'commercial'
+            ? commercialProjects.map((project) => (
+                <li class="projects__item">
+                  <AiImage
+                    image={project}
+                    ratio="3 / 2"
+                    sizes="(min-width: 62rem) 33vw, (min-width: 40rem) 50vw, 100vw"
+                  />
+                  <p class="t-label projects__caption">{project.caption}</p>
+                </li>
+              ))
+            : placeholders.map((n) => (
+                <li class="projects__item">
+                  <MediaSlot
+                    ratio="3 / 2"
+                    label={`${segment.label} project ${n}: photograph, name, location and scope`}
+                  />
+                </li>
+              ))}
         </ul>
       ))
     }
@@ -53,6 +70,11 @@ const placeholders = Array.from({ length: count }, (_, i) => i + 1);
     list-style: none;
     margin: 0;
     padding: 0;
+  }
+
+  .projects__caption {
+    margin: 1rem 0 0;
+    color: var(--color-charcoal);
   }
 
   @media (min-width: 40rem) {

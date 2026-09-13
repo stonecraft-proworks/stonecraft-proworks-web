@@ -25,6 +25,11 @@ nunca inventado.
 - **Fotografia y video** — `src/components/MediaSlot.astro` marca cada hueco
   con el asset exacto que falta. El marcado final del `<video>` del hero ya
   esta escrito y comentado en `src/components/Hero.astro`.
+  Segmento **Commercial** resuelto con visualizaciones IA (acordado el
+  2026-09-13): manifiesto en `src/data/media.ts`, archivos en
+  `src/assets/commercial/`, etiqueta "AI visualization" en pantalla via
+  `src/components/AiImage.astro`. Residencial, `/services`, intro,
+  before/after y CTA siguen con hueco hasta recibir fotografia real.
 - **Datos de contacto** — `src/data/site.ts`. Falta el telefono: sin el, la
   barra movil Call/Text/WhatsApp no se renderiza. Faltan las URLs de redes.
 - **Destino del formulario** — `site.formEndpoint`. Mientras sea `null` el
