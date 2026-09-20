@@ -14,27 +14,34 @@ import MediaSlot from './MediaSlot.astro';
  */
 interface Props {
   showLink?: boolean;
+  hideHeading?: boolean;
 }
 
-const { showLink = true } = Astro.props;
+const { showLink = true, hideHeading = false } = Astro.props;
 
 const slots = ['Manufacturer 1', 'Manufacturer 2', 'Manufacturer 3', 'Manufacturer 4'];
 ---
 
 <section class="section surface-sand" id="materials">
   <div class="shell">
-    <SectionLabel
-      label="Premium brands"
-      linkLabel={showLink ? 'Explore all materials' : undefined}
-      linkHref={showLink ? '/materials' : undefined}
-    />
+    {
+      !hideHeading && (
+        <>
+          <SectionLabel
+            label="Premium brands"
+            linkLabel={showLink ? 'Explore all materials' : undefined}
+            linkHref={showLink ? '/materials' : undefined}
+          />
 
-    <div class="materials__intro">
-      <h2 class="t-h1">The Material Library</h2>
-      <p class="measure materials__lead">
-        Explore trusted manufacturers and find the perfect style for your project.
-      </p>
-    </div>
+          <div class="materials__intro">
+            <h2 class="t-h1">The Material Library</h2>
+            <p class="measure materials__lead">
+              Explore trusted manufacturers and find the perfect style for your project.
+            </p>
+          </div>
+        </>
+      )
+    }
 
     <ul class="materials__grid">
       {
