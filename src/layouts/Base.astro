@@ -16,6 +16,23 @@ interface Props {
 const { title, description, showSelector = false } = Astro.props;
 const fullTitle = `${title} | ${site.name}`;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
+
+/**
+ * LocalBusiness (decision 2 dependiente): solo se incluyen los campos que
+ * ya existen. Telefono y direccion siguen PENDIENTES en site.ts, asi que
+ * no se inventan aqui tampoco: Google trata un telefono o direccion falsos
+ * peor que no tenerlos.
+ */
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: site.name,
+  url: site.url,
+  email: site.email,
+  areaServed: site.serviceArea,
+  ...(site.phone ? { telephone: site.phone } : {}),
+  ...(site.address ? { address: site.address } : {}),
+};
 ---
 
 <!doctype html>
@@ -36,6 +53,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} is:inline />
 
     {/*
       Se aplica el segmento guardado ANTES del primer paint para que no
