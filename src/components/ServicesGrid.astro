@@ -3,7 +3,7 @@ import SectionLabel from './SectionLabel.astro';
 import ServiceCard from './ServiceCard.astro';
 import { segments } from '../data/segments';
 import { services, serviceBySlug } from '../data/services';
-import { commercialServiceImage } from '../data/media';
+import { commercialServiceImage, residentialServiceImage } from '../data/media';
 
 /**
  * Rejilla de servicios de portada.
@@ -15,8 +15,11 @@ import { commercialServiceImage } from '../data/media';
  * servicios la contradice.
  *
  * Se renderizan los dos segmentos y el CSS oculta el que no toca. El grid
- * comercial lleva visualizaciones IA (ver data/media.ts); el residencial y
- * la pagina /services siguen con huecos hasta recibir fotografia real.
+ * comercial lleva visualizaciones IA (ver data/media.ts); el residencial
+ * lleva fotografia real donde existe (pool decks, outdoor living, pavers) y
+ * hueco marcado en el resto (outdoor kitchens, cleaning/restoration, stone
+ * veneer). La pagina /services (showAll) sigue sin imagenes en ningun
+ * segmento.
  */
 interface Props {
   /** Cuando es true muestra los 8 servicios sin segmentar (pagina /services). */
@@ -71,8 +74,18 @@ const { showAll = false } = Astro.props;
               const service = serviceBySlug(slug);
               if (!service) return null;
               const image =
-                segment.id === 'commercial' ? commercialServiceImage(slug) : undefined;
-              return <ServiceCard service={service} headingLevel="h3" image={image} />;
+                segment.id === 'commercial'
+                  ? commercialServiceImage(slug)
+                  : residentialServiceImage(slug);
+              const imageKind = segment.id === 'commercial' ? 'ai' : 'photo';
+              return (
+                <ServiceCard
+                  service={service}
+                  headingLevel="h3"
+                  image={image}
+                  imageKind={imageKind}
+                />
+              );
             })}
           </div>
         ))

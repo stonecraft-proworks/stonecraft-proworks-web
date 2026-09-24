@@ -1,0 +1,56 @@
+---
+import { Image } from 'astro:assets';
+import type { MediaImage } from '../data/media';
+
+/**
+ * Fotografia real de obra ejecutada. Sin etiqueta: a diferencia de
+ * <AiImage>, esto es trabajo entregado, no una visualizacion.
+ */
+interface Props {
+  image: MediaImage;
+  /** Proporcion CSS, ej. '4 / 3'. 'auto' para llenar el contenedor. */
+  ratio?: string;
+  sizes?: string;
+  widths?: number[];
+  loading?: 'lazy' | 'eager';
+  class?: string;
+}
+
+const {
+  image,
+  ratio = '3 / 2',
+  sizes = '(min-width: 48rem) 50vw, 100vw',
+  widths = [480, 768, 1200, 1600],
+  loading = 'lazy',
+  class: className = '',
+} = Astro.props;
+---
+
+<figure class={`photo-image ${className}`} style={`aspect-ratio:${ratio}`}>
+  <Image
+    src={image.src}
+    alt={image.alt}
+    widths={widths}
+    sizes={sizes}
+    loading={loading}
+    decoding="async"
+    class="photo-image__img"
+  />
+</figure>
+
+<style>
+  .photo-image {
+    position: relative;
+    margin: 0;
+    width: 100%;
+    overflow: hidden;
+    background-color: var(--color-sandstone);
+  }
+
+  .photo-image__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>

@@ -1,6 +1,7 @@
 ---
 import SectionLabel from './SectionLabel.astro';
-import MediaSlot from './MediaSlot.astro';
+import PhotoImage from './PhotoImage.astro';
+import { residentialMedia } from '../data/media';
 
 /**
  * Before & After.
@@ -9,8 +10,10 @@ import MediaSlot from './MediaSlot.astro';
  * arrastre funcionan sin escribir nada a mano. Sin JS la comparativa se
  * queda al 50% y las dos mitades siguen siendo visibles: degrada bien.
  *
- * Los pares de fotos estan PENDIENTES (decision 1).
+ * Par real de un pool deck (llegado 2026-09-24): mismo fondo, misma valla y
+ * palmeras en las dos fotos. Sin nombre ni direccion del cliente.
  */
+const { before, after } = residentialMedia.beforeAfter;
 ---
 
 <section class="section surface-dark on-dark" id="before-after">
@@ -27,12 +30,12 @@ import MediaSlot from './MediaSlot.astro';
     <figure class="ba__figure">
       <div class="ba__viewer" id="ba-viewer">
         <div class="ba__layer ba__layer--after">
-          <MediaSlot ratio="16 / 10" label="Driveway transformation: AFTER photograph" />
+          <PhotoImage image={after} ratio="16 / 10" />
           <span class="t-label ba__tag ba__tag--after">After</span>
         </div>
 
         <div class="ba__layer ba__layer--before">
-          <MediaSlot ratio="16 / 10" label="Driveway transformation: BEFORE photograph" />
+          <PhotoImage image={before} ratio="16 / 10" />
           <span class="t-label ba__tag ba__tag--before">Before</span>
         </div>
 

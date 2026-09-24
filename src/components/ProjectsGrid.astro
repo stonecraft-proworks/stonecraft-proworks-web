@@ -2,19 +2,19 @@
 import SectionLabel from './SectionLabel.astro';
 import MediaSlot from './MediaSlot.astro';
 import AiImage from './AiImage.astro';
+import PhotoImage from './PhotoImage.astro';
 import { segments } from '../data/segments';
-import { commercialMedia } from '../data/media';
+import { commercialMedia, residentialMedia } from '../data/media';
 
 /**
  * Galeria de proyectos.
  *
- * No hay ni un proyecto entregado (decision 1, pendiente): ni fotos, ni
- * nombres, ni ubicaciones, ni alcance. No se inventa ninguno. Queda la
- * retícula definitiva con huecos marcados, uno por segmento, para que al
- * llegar el material solo haya que rellenar los datos.
- *
- * Segmento comercial: visualizaciones IA con pie por TIPO de proyecto
- * (acordado 2026-09-13). Sin nombres ni ubicaciones: no existen.
+ * Comercial: visualizaciones IA con pie por TIPO de proyecto (acordado
+ * 2026-09-13). Residencial: fotografia real de obra ejecutada (llegada
+ * 2026-09-24), tambien con pie por TIPO de espacio unicamente. Ninguno de
+ * los dos segmentos lleva nombre, ubicacion ni alcance: esos datos no se
+ * entregaron y no se inventan. Si un segmento tiene menos fotos reales que
+ * `count`, el resto queda como hueco marcado en vez de repetir imagenes.
  */
 interface Props {
   showLink?: boolean;
@@ -22,8 +22,12 @@ interface Props {
 }
 
 const { showLink = true, count = 6 } = Astro.props;
-const placeholders = Array.from({ length: count }, (_, i) => i + 1);
 const commercialProjects = commercialMedia.projects.slice(0, count);
+const residentialProjects = residentialMedia.projects.slice(0, count);
+const residentialPlaceholders = Array.from(
+  { length: Math.max(count - residentialProjects.length, 0) },
+  (_, i) => residentialProjects.length + i + 1,
+);
 ---
 
 <section class="section" id="projects">
@@ -48,14 +52,28 @@ const commercialProjects = commercialMedia.projects.slice(0, count);
                   <p class="t-label projects__caption">{project.caption}</p>
                 </li>
               ))
-            : placeholders.map((n) => (
-                <li class="projects__item">
-                  <MediaSlot
-                    ratio="3 / 2"
-                    label={`${segment.label} project ${n}: photograph, name, location and scope`}
-                  />
-                </li>
-              ))}
+            : (
+              <>
+                {residentialProjects.map((project) => (
+                  <li class="projects__item">
+                    <PhotoImage
+                      image={project}
+                      ratio="3 / 2"
+                      sizes="(min-width: 62rem) 33vw, (min-width: 40rem) 50vw, 100vw"
+                    />
+                    <p class="t-label projects__caption">{project.caption}</p>
+                  </li>
+                ))}
+                {residentialPlaceholders.map((n) => (
+                  <li class="projects__item">
+                    <MediaSlot
+                      ratio="3 / 2"
+                      label={`${segment.label} project ${n}: photograph, name, location and scope`}
+                    />
+                  </li>
+                ))}
+              </>
+            )}
         </ul>
       ))
     }

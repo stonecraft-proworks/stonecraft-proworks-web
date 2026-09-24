@@ -4,6 +4,15 @@
  * resuelve con visualizaciones IA). Se marcan en pantalla como tal: no son
  * obra ejecutada y no se presentan como si lo fueran.
  *
+ * Residencial ya recibio su primera tanda de fotografia real (2026-09-24):
+ * proyectos de piscina y patios ejecutados. No llevan etiqueta porque son
+ * obra real (ver componente PhotoImage, sin el aviso "AI visualization" de
+ * AiImage). Solo se etiquetan por TIPO de espacio, nunca con nombre ni
+ * direccion del cliente: esos datos no se entregaron. Outdoor kitchens,
+ * cleaning/sealing/restoration y stone veneer siguen sin fotografia propia
+ * y se quedan con el hueco marcado hasta que llegue material de esas
+ * categorias.
+ *
  * Viven en src/assets (no en public/) para que astro:assets las sirva en
  * WebP responsivo. Cuando llegue fotografia real de un proyecto comercial
  * se sustituye la entrada correspondiente sin tocar componentes.
@@ -23,6 +32,21 @@ import prjCampus from '../assets/commercial/project-office-campus-walkway.jpg';
 import prjRestaurant from '../assets/commercial/project-restaurant-patio.jpg';
 import prjCommunity from '../assets/commercial/project-community-entrance.jpg';
 import prjHotel from '../assets/commercial/project-hotel-courtyard.jpg';
+
+import resPoolDeckBefore from '../assets/residential/pool-deck-before.jpg';
+import resPoolDeckAfter from '../assets/residential/pool-deck-after.jpg';
+import resLapPool from '../assets/residential/lap-pool-brick-walkway.jpg';
+import resLagoonPool from '../assets/residential/lagoon-pool-waterfall.jpg';
+import resOceanfrontInfinity from '../assets/residential/oceanfront-infinity-pool.jpg';
+import resCabanaBar from '../assets/residential/poolside-cabana-bar.jpg';
+import resResortPatio from '../assets/residential/resort-style-pool-patio.jpg';
+import resModernSpa from '../assets/residential/modern-pool-spa-patio.jpg';
+import resSpaFireFeature from '../assets/residential/pool-spa-fire-feature.jpg';
+import resOceanfrontFountains from '../assets/residential/oceanfront-pool-fountains.jpg';
+import resTravertineDeck from '../assets/residential/travertine-pool-deck.jpg';
+import resRaisedSpaDeck from '../assets/residential/pool-raised-spa-deck.jpg';
+import resFireBowl from '../assets/residential/rectangular-pool-fire-bowl.jpg';
+import resOceanfrontPaverPatio from '../assets/residential/oceanfront-paver-patio.jpg';
 
 export interface MediaImage {
   src: ImageMetadata;
@@ -80,4 +104,53 @@ export const commercialMedia = {
 
 export function commercialServiceImage(slug: string): MediaImage | undefined {
   return (commercialMedia.services as Record<string, MediaImage>)[slug];
+}
+
+export const residentialMedia = {
+  /** Antes/despues real de una transformacion de pool deck (2026-09-24). */
+  beforeAfter: {
+    before: {
+      src: resPoolDeckBefore,
+      alt: 'Backyard pool before the deck renovation, bare dirt and sand around the shell',
+    },
+    after: {
+      src: resPoolDeckAfter,
+      alt: 'Same pool after the deck renovation, finished in large-format grey pavers',
+    },
+  } satisfies { before: MediaImage; after: MediaImage },
+
+  /** Por slug de servicio. Solo donde hay fotografia real que lo represente. */
+  services: {
+    'pool-deck-transformations': {
+      src: resTravertineDeck,
+      alt: 'Curved travertine pool deck with paver steps into the water',
+    },
+    'outdoor-living-spaces': {
+      src: resCabanaBar,
+      alt: 'Covered outdoor bar and lounge with paver and turf-inlay flooring',
+    },
+    'paver-installation': {
+      src: resOceanfrontPaverPatio,
+      alt: 'Oceanfront paver patio with a checkerboard paver and turf pattern',
+    },
+  } satisfies Record<string, MediaImage>,
+
+  projects: [
+    { src: resLapPool, caption: 'Lap pool & paver walkway', alt: 'Brick paver walkway beside a narrow lap pool with garden statuary' },
+    { src: resLagoonPool, caption: 'Tropical lagoon pool', alt: 'Freeform lagoon pool with a stone waterfall and thatched-roof cabana' },
+    { src: resOceanfrontInfinity, caption: 'Oceanfront pool deck', alt: 'Oceanfront infinity pool with large-format paver decking' },
+    { src: resCabanaBar, caption: 'Poolside bar & lounge', alt: 'Covered poolside bar and lounge with paver and turf-inlay flooring' },
+    { src: resResortPatio, caption: 'Resort-style pool patio', alt: 'Resort-style pool patio with light travertine coping and palm landscaping' },
+    { src: resModernSpa, caption: 'Modern pool & spa patio', alt: 'Modern pool and raised spa with turf-striped paver patio' },
+    { src: resSpaFireFeature, caption: 'Pool, spa & fire feature', alt: 'Pool and spa with lit fire bowls on a marble-look paver patio' },
+    { src: resOceanfrontFountains, caption: 'Oceanfront pool with fountains', alt: 'Oceanfront pool with fountain jets and glass-tile waterline' },
+    { src: resTravertineDeck, caption: 'Travertine pool deck', alt: 'Curved travertine pool deck with paver steps into the water' },
+    { src: resRaisedSpaDeck, caption: 'Pool & raised spa deck', alt: 'Pool with raised spa and travertine paver deck in a tropical yard' },
+    { src: resFireBowl, caption: 'Pool & spa with fire bowl', alt: 'Rectangular pool with raised spa and fire bowl on marble-look pavers' },
+    { src: resOceanfrontPaverPatio, caption: 'Oceanfront paver patio', alt: 'Oceanfront infinity pool with a checkerboard paver and turf patio' },
+  ] satisfies ProjectImage[],
+};
+
+export function residentialServiceImage(slug: string): MediaImage | undefined {
+  return (residentialMedia.services as Record<string, MediaImage>)[slug];
 }
