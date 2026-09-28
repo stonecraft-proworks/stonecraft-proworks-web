@@ -16,6 +16,7 @@ interface Props {
 const { title, description, showSelector = false } = Astro.props;
 const fullTitle = `${title} | ${site.name}`;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
+const shareImage = new URL('/icon-512.png', Astro.site ?? site.url).href;
 
 /**
  * LocalBusiness (decision 2 dependiente): solo se incluyen los campos que
@@ -53,6 +54,14 @@ const structuredData = {
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={shareImage} />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={shareImage} />
 
     <script type="application/ld+json" set:html={JSON.stringify(structuredData)} is:inline />
 
