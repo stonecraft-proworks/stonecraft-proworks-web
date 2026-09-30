@@ -30,8 +30,18 @@ nunca inventado.
   `src/assets/commercial/`, etiqueta "AI visualization" en pantalla via
   `src/components/AiImage.astro`. Residencial, `/services`, intro,
   before/after y CTA siguen con hueco hasta recibir fotografia real.
-- **Datos de contacto** — `src/data/site.ts`. Falta el telefono: sin el, la
-  barra movil Call/Text/WhatsApp no se renderiza. Faltan las URLs de redes.
+- **Datos de contacto** — `src/data/site.ts`. Falta el telefono (y demas datos
+  de contacto, etc.): sin el, la barra movil Call/Text/WhatsApp no se
+  renderiza.
+- **Redes sociales** — `src/data/site.ts`. Faltan las URLs de las redes.
+- **Formulario de contacto de la parte Commercial** — desarrollado (2026-09-30): bloque
+  `src/components/CommercialInquiry.astro` en la portada, visible solo en el segmento
+  Commercial, con un boton que abre el formulario en un `<dialog>`. Sin JS el boton es
+  un enlace a `/contact`. Validacion compartida en `src/scripts/form-validation.ts`.
+  Su envio depende de `site.formEndpoint` (ver abajo). Sin verificar en navegador:
+  el build local esta bloqueado por una politica de Application Control de Windows.
+- **Catalogo de pavers** — por definir y recibir contenido. (Anotado
+  2026-09-30, sin desarrollar.)
 - **Destino del formulario** — `site.formEndpoint`. Mientras sea `null` el
   envio queda deshabilitado con aviso visible y se ofrece el correo.
 - **Marcas de fabricante** — no se reproduce ninguna hasta confirmar

@@ -12,9 +12,8 @@ import { site } from '../data/site';
  * un envio que se perderia. Cuando se decida el destino basta con poner la
  * URL en site.ts: es el unico punto a tocar.
  *
- * La validacion es la nativa del navegador (required, type=email) mas un
- * resumen de errores anunciado con aria-live, porque el mensaje nativo no
- * siempre lo lee el lector de pantalla.
+ * La validacion vive en scripts/form-validation.ts (compartida con el
+ * formulario comercial).
  */
 const enabled = site.formEndpoint !== null;
 ---
@@ -93,55 +92,12 @@ const enabled = site.formEndpoint !== null;
 </form>
 
 <script>
+  import { bindFormValidation } from '../scripts/form-validation';
+
   const form = document.getElementById('consultation-form');
   const errorBox = document.getElementById('form-errors');
 
-  if (form instanceof HTMLFormElement && errorBox) {
-    form.addEventListener('submit', (event) => {
-      const invalid = Array.from(
-        form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
-          'input, select, textarea',
-        ),
-      ).filter((field) => !field.checkValidity());
-
-      form.querySelectorAll('[aria-invalid]').forEach((field) => {
-        field.removeAttribute('aria-invalid');
-      });
-
-      if (invalid.length === 0) {
-        errorBox.hidden = true;
-        errorBox.textContent = '';
-        return;
-      }
-
-      event.preventDefault();
-
-      const list = document.createElement('ul');
-      invalid.forEach((field) => {
-        field.setAttribute('aria-invalid', 'true');
-        const label = form.querySelector(`label[for="${field.id}"]`);
-        const name = label?.textContent?.trim() ?? field.name;
-        const item = document.createElement('li');
-        const link = document.createElement('a');
-        link.href = `#${field.id}`;
-        link.textContent = `${name}: ${field.validationMessage}`;
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          field.focus();
-        });
-        item.appendChild(link);
-        list.appendChild(item);
-      });
-
-      errorBox.textContent = '';
-      const heading = document.createElement('p');
-      heading.textContent = 'Please review the following:';
-      errorBox.appendChild(heading);
-      errorBox.appendChild(list);
-      errorBox.hidden = false;
-      invalid[0]?.focus();
-    });
-  }
+  if (form instanceof HTMLFormElement && errorBox) bindFormValidation(form, errorBox);
 </script>
 
 <style>
