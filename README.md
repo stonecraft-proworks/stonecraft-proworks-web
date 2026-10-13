@@ -40,8 +40,13 @@ nunca inventado.
   un enlace a `/contact`. Validacion compartida en `src/scripts/form-validation.ts`.
   Su envio depende de `site.formEndpoint` (ver abajo). Sin verificar en navegador:
   el build local esta bloqueado por una politica de Application Control de Windows.
-- **Catalogo de pavers** — por definir y recibir contenido. (Anotado
-  2026-09-30, sin desarrollar.)
+- **Catalogo de pavers** — estructura desarrollada (2026-09-30) dentro de
+  `/materials`: `src/components/PaverCatalog.astro`, datos en
+  `src/data/pavers.ts` (array `pavers` VACIO a proposito), filtros por
+  style/color/finish derivados de los datos (`src/scripts/paver-filter.ts`,
+  mejora progresiva). Sin contenido muestra la lista de entregables
+  (`catalogChecklist`) y huecos. Falta que el cliente entregue productos,
+  fotos, taxonomia y confirmacion de marcas. Sin verificar con datos reales.
 - **Destino del formulario** — `site.formEndpoint`. Mientras sea `null` el
   envio queda deshabilitado con aviso visible y se ofrece el correo.
 - **Marcas de fabricante** — no se reproduce ninguna hasta confirmar

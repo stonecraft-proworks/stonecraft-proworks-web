@@ -86,6 +86,10 @@ const enabled = site.formEndpoint !== null;
     ></textarea>
   </div>
 
+  <p class="form__status" data-form-status role="status" hidden></p>
+
+  <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="form__trap" aria-hidden="true" />
+
   <button type="submit" class="btn btn-solid form__submit" disabled={!enabled}>
     Request a Consultation
   </button>
@@ -93,14 +97,37 @@ const enabled = site.formEndpoint !== null;
 
 <script>
   import { bindFormValidation } from '../scripts/form-validation';
+  import { bindFormSubmit } from '../scripts/form-submit';
 
   const form = document.getElementById('consultation-form');
   const errorBox = document.getElementById('form-errors');
 
-  if (form instanceof HTMLFormElement && errorBox) bindFormValidation(form, errorBox);
+  if (form instanceof HTMLFormElement && errorBox) {
+    bindFormValidation(form, errorBox);
+    bindFormSubmit(form, 'Thank you. We received your request and will get back to you shortly.');
+  }
 </script>
 
 <style>
+  .form__status {
+    margin: 0;
+    padding: 1rem 1.25rem;
+    border-left: 3px solid var(--color-warm-taupe);
+    background-color: color-mix(in srgb, var(--color-sandstone) 30%, var(--color-warm-cream));
+    font-size: 0.9375rem;
+  }
+
+  .form__status[data-kind='error'] {
+    border-left-color: #9b2c2c;
+    background-color: color-mix(in srgb, #9b2c2c 8%, var(--color-warm-cream));
+  }
+
+  /* Honeypot anti-spam: fuera de pantalla, no display:none (los bots lo detectan). */
+  .form__trap {
+    position: absolute;
+    left: -9999px;
+  }
+
   .form {
     display: grid;
     gap: 1.5rem;

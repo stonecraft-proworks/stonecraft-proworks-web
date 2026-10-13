@@ -1,0 +1,242 @@
+---
+import { Image } from 'astro:assets';
+import MediaSlot from './MediaSlot.astro';
+import { pavers, filterFacets, catalogChecklist } from '../data/pavers';
+
+/**
+ * Catalogo de pavers dentro de /materials. Sin contenido (pavers vacio)
+ * muestra el estado PENDIENTE: lista de entregables y huecos con la
+ * proporcion final de las tarjetas. Con contenido, galeria filtrable.
+ * Datos y checklist: src/data/pavers.ts.
+ */
+const facets = filterFacets();
+const hasContent = pavers.length > 0;
+---
+
+<section class="section" id="paver-catalog" aria-labelledby="paver-catalog-title">
+  <div class="shell">
+    <p class="t-label catalog__eyebrow">Paver catalog</p>
+    <h2 class="t-h1" id="paver-catalog-title">Find your paver</h2>
+
+    {
+      hasContent ? (
+        <div data-paver-catalog>
+          {facets.length > 0 && (
+            <form class="filters" data-filter-controls hidden aria-label="Filter pavers">
+              {facets.map((facet) => (
+                <fieldset class="filters__group">
+                  <legend class="t-label">{facet.label}</legend>
+                  <div class="filters__options">
+                    {facet.options.map((option) => (
+                      <label class="chip">
+                        <input type="checkbox" name={facet.key} value={option} />
+                        <span>{option}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              ))}
+              <button type="button" class="btn btn-outline filters__reset" data-filter-reset hidden>
+                Clear filters
+              </button>
+            </form>
+          )}
+
+          <p class="catalog__status" data-filter-status aria-live="polite" />
+
+          <ul class="catalog__grid">
+            {pavers.map((paver) => (
+              <li
+                class="paver"
+                data-paver
+                data-style={paver.style}
+                data-color={paver.color}
+                data-finish={paver.finish}
+              >
+                <Image
+                  src={paver.image.src}
+                  alt={paver.image.alt}
+                  widths={[320, 480, 640]}
+                  sizes="(min-width: 62rem) 25vw, (min-width: 40rem) 50vw, 100vw"
+                  class="paver__img"
+                />
+                <h3 class="t-h3 paver__name">{paver.name}</h3>
+                <p class="paver__meta">
+                  {[paver.style, paver.color, paver.finish].join(' · ')}
+                </p>
+                {paver.size && <p class="paver__meta">{paver.size}</p>}
+                {paver.uses && paver.uses.length > 0 && (
+                  <p class="paver__meta">{paver.uses.join(', ')}</p>
+                )}
+              </li>
+            ))}
+          </ul>
+
+          <p class="catalog__empty" data-filter-empty hidden>
+            No pavers match those filters. Try removing one.
+          </p>
+        </div>
+      ) : (
+        <div class="pending">
+          <p class="measure pending__lead">
+            The paver catalog is being prepared. This is what we still need to publish it:
+          </p>
+          <ul class="pending__list">
+            {catalogChecklist.map((item) => <li>{item}</li>)}
+          </ul>
+          <ul class="catalog__grid" aria-hidden="false">
+            {[1, 2, 3, 4].map((n) => (
+              <li>
+                <MediaSlot ratio="4 / 3" label={`Paver ${n}: photo, name, style, color, finish`} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<script>
+  import { bindPaverFilter } from '../scripts/paver-filter';
+
+  const root = document.querySelector<HTMLElement>('[data-paver-catalog]');
+  if (root) bindPaverFilter(root);
+</script>
+
+<style>
+  .catalog__eyebrow {
+    margin: 0 0 1rem;
+    color: var(--color-charcoal);
+  }
+
+  .pending {
+    margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .pending__lead {
+    margin: 0;
+    color: var(--color-charcoal);
+  }
+
+  .pending__list {
+    margin: 1rem 0 clamp(2rem, 4vw, 3rem);
+    padding-left: 1.25rem;
+    color: var(--color-charcoal);
+    line-height: 1.6;
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 1.5rem 2.5rem;
+    margin: clamp(1.5rem, 3vw, 2.5rem) 0 1.5rem;
+  }
+
+  .filters[hidden] {
+    display: none;
+  }
+
+  .filters__group {
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .filters__group legend {
+    padding: 0;
+    margin-bottom: 0.6rem;
+  }
+
+  .filters__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .chip {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .chip input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    cursor: pointer;
+  }
+
+  .chip span {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-charcoal);
+    font-size: 0.875rem;
+    min-height: 2.5rem;
+    line-height: 1.5rem;
+  }
+
+  .chip input:checked + span {
+    background-color: var(--color-rich-black);
+    border-color: var(--color-rich-black);
+    color: var(--color-warm-cream);
+  }
+
+  .chip input:focus-visible + span {
+    outline: 2px solid var(--color-rich-black);
+    outline-offset: 2px;
+  }
+
+  .catalog__status {
+    margin: 0 0 1.5rem;
+    font-size: 0.875rem;
+    color: var(--color-charcoal);
+  }
+
+  .catalog__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 40rem) {
+    .catalog__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 62rem) {
+    .catalog__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .paver[hidden] {
+    display: none;
+  }
+
+  .paver__img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .paver__name {
+    margin: 1rem 0 0.25rem;
+  }
+
+  .paver__meta {
+    margin: 0.25rem 0 0;
+    font-size: 0.875rem;
+    color: var(--color-charcoal);
+  }
+
+  .catalog__empty {
+    margin: 2rem 0 0;
+    color: var(--color-charcoal);
+  }
+</style>

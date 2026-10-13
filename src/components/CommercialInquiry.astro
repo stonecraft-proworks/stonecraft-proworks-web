@@ -84,6 +84,7 @@ const propertyTypes = [
         novalidate
       >
         <input type="hidden" name="segment" value="commercial" />
+        <input type="hidden" name="_subject" value="New commercial inquiry - StoneCraft ProWorks" />
 
         {
           !enabled && (
@@ -148,6 +149,10 @@ const propertyTypes = [
           ></textarea>
         </div>
 
+        <p class="form__status" data-form-status role="status" hidden></p>
+
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="form__trap" aria-hidden="true" />
+
         <button type="submit" class="btn btn-solid form__submit" disabled={!enabled}>
           Send Inquiry
         </button>
@@ -158,6 +163,7 @@ const propertyTypes = [
 
 <script>
   import { bindFormValidation } from '../scripts/form-validation';
+  import { bindFormSubmit } from '../scripts/form-submit';
 
   const opener = document.getElementById('commercial-form-open');
   const dialog = document.getElementById('commercial-dialog');
@@ -184,7 +190,10 @@ const propertyTypes = [
     dialog.addEventListener('close', () => opener.focus());
   }
 
-  if (form instanceof HTMLFormElement && errorBox) bindFormValidation(form, errorBox);
+  if (form instanceof HTMLFormElement && errorBox) {
+    bindFormValidation(form, errorBox);
+    bindFormSubmit(form, 'Thank you. We received your inquiry and our commercial team will get back to you shortly.');
+  }
 </script>
 
 <style>
@@ -291,6 +300,25 @@ const propertyTypes = [
   .form__notice a,
   .form__errors a {
     border-bottom: 1px solid currentColor;
+  }
+
+  .form__status {
+    margin: 0;
+    padding: 1rem 1.25rem;
+    border-left: 3px solid var(--color-warm-taupe);
+    background-color: color-mix(in srgb, var(--color-sandstone) 30%, var(--color-warm-cream));
+    font-size: 0.9375rem;
+  }
+
+  .form__status[data-kind='error'] {
+    border-left-color: #9b2c2c;
+    background-color: color-mix(in srgb, #9b2c2c 8%, var(--color-warm-cream));
+  }
+
+  /* Honeypot anti-spam: fuera de pantalla, no display:none (los bots lo detectan). */
+  .form__trap {
+    position: absolute;
+    left: -9999px;
   }
 
   .form__errors {
