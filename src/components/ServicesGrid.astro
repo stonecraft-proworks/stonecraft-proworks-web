@@ -3,7 +3,10 @@ import SectionLabel from './SectionLabel.astro';
 import ServiceCard from './ServiceCard.astro';
 import { segments } from '../data/segments';
 import { services, serviceBySlug } from '../data/services';
+import type { Service } from '../data/services';
 import { commercialServiceImage, residentialServiceImage } from '../data/media';
+import type { MediaImage } from '../data/media';
+import { showPending } from '../data/flags';
 
 /**
  * Rejilla de servicios de portada.
@@ -20,6 +23,11 @@ import { commercialServiceImage, residentialServiceImage } from '../data/media';
  * hueco marcado en el resto (outdoor kitchens, cleaning/restoration, stone
  * veneer). La pagina /services (showAll) sigue sin imagenes en ningun
  * segmento.
+ *
+ * Version publica (data/flags.ts): no hay huecos. Cada segmento muestra solo
+ * los servicios con imagen, en el orden de `homeServices` y completando con
+ * otros servicios que si tengan foto, hasta un numero par (2 por fila).
+ * En /services las tarjetas sin foto quedan como tarjetas de solo texto.
  */
 interface Props {
   /** Cuando es true muestra los 8 servicios sin segmentar (pagina /services). */
@@ -27,6 +35,22 @@ interface Props {
 }
 
 const { showAll = false } = Astro.props;
+
+function homeCards(segmentId: string, homeServices: string[]) {
+  const imageFor = segmentId === 'commercial' ? commercialServiceImage : residentialServiceImage;
+  const cards = homeServices
+    .map((slug) => ({ service: serviceBySlug(slug), image: imageFor(slug) }))
+    .filter((c): c is { service: Service; image: MediaImage | undefined } => !!c.service);
+  if (showPending) return cards;
+
+  const withImage = cards.filter((c) => c.image);
+  const extras = services
+    .filter((s) => !homeServices.includes(s.slug))
+    .map((service) => ({ service, image: imageFor(service.slug) }))
+    .filter((c) => c.image);
+  const pool = [...withImage, ...extras].slice(0, homeServices.length);
+  return pool.slice(0, pool.length - (pool.length % 2));
+}
 ---
 
 <section class="section" id="services">
@@ -70,23 +94,14 @@ const { showAll = false } = Astro.props;
       ) : (
         segments.map((segment) => (
           <div class="services__grid" data-seg={segment.id}>
-            {segment.homeServices.map((slug) => {
-              const service = serviceBySlug(slug);
-              if (!service) return null;
-              const image =
-                segment.id === 'commercial'
-                  ? commercialServiceImage(slug)
-                  : residentialServiceImage(slug);
-              const imageKind = segment.id === 'commercial' ? 'ai' : 'photo';
-              return (
-                <ServiceCard
-                  service={service}
-                  headingLevel="h3"
-                  image={image}
-                  imageKind={imageKind}
-                />
-              );
-            })}
+            {homeCards(segment.id, segment.homeServices).map(({ service, image }) => (
+              <ServiceCard
+                service={service}
+                headingLevel="h3"
+                image={image}
+                imageKind={segment.id === 'commercial' ? 'ai' : 'photo'}
+              />
+            ))}
           </div>
         ))
       )

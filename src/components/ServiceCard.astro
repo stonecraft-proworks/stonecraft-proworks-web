@@ -4,6 +4,7 @@ import AiImage from './AiImage.astro';
 import PhotoImage from './PhotoImage.astro';
 import type { Service } from '../data/services';
 import type { MediaImage } from '../data/media';
+import { showPending } from '../data/flags';
 
 /**
  * Tarjeta de servicio.
@@ -26,19 +27,21 @@ const Heading = headingLevel;
 ---
 
 <article class="service">
-  <div class="service__media">
-    {
-      image ? (
-        imageKind === 'photo' ? (
-          <PhotoImage image={image} ratio="4 / 3" />
+  {
+    (image || showPending) && (
+      <div class="service__media">
+        {image ? (
+          imageKind === 'photo' ? (
+            <PhotoImage image={image} ratio="4 / 3" />
+          ) : (
+            <AiImage image={image} ratio="4 / 3" />
+          )
         ) : (
-          <AiImage image={image} ratio="4 / 3" />
-        )
-      ) : (
-        <MediaSlot ratio="4 / 3" label={`${service.name}: hero photograph`} />
-      )
-    }
-  </div>
+          <MediaSlot ratio="4 / 3" label={`${service.name}: hero photograph`} />
+        )}
+      </div>
+    )
+  }
 
   <div class="service__body">
     <Heading class="t-h3 service__name">{service.name}</Heading>
@@ -63,6 +66,13 @@ const Heading = headingLevel;
 
   .service__media {
     margin-bottom: 1.75rem;
+  }
+
+  /* Tarjeta sin foto (version publica, /services): filete superior para
+     que se lea como tarjeta de texto intencionada, no como hueco. */
+  .service:not(:has(.service__media)) {
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--color-warm-taupe);
   }
 
   .service__body {

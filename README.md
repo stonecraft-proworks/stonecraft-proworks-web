@@ -19,8 +19,28 @@ en esta fase.
 
 ## Pendientes bloqueantes
 
-Todo lo pendiente esta marcado en el codigo y visible en pantalla como hueco,
-nunca inventado.
+Todo lo pendiente esta marcado en el codigo, nunca inventado.
+
+**Version publica vs. interna** (acordado 2026-10-13, `src/data/flags.ts`):
+el publico nunca ve huecos.
+
+    npm run dev                                huecos visibles (checklist interna)
+    npm run build                              version publica, sin huecos
+    PUBLIC_SHOW_PENDING=true npm run build     build de revision con huecos
+
+En la version publica: hero, intro y CTA usan fotografia real ya entregada
+como sustituto (`residentialMedia.standIns`); las tarjetas de servicio sin
+foto se quitan de la portada; `/materials` sale del menu, la portada y el
+sitemap (vuelve sola al cargar el primer paver); "Watch Our Story" y la
+seccion del video en `/about` no se muestran.
+
+**Antes/despues de potencial** (pedido del cliente 2026-10-13): casa de la tia
+de Nicolas tal como esta hoy (foto real) frente a una edicion IA de la misma
+foto con pavers (Nano Banana Pro). 4 pares en
+`residentialMedia.visualizedBeforeAfter`, mostrados bajo el Before & After
+real con `src/components/CompareSlider.astro` y la etiqueta
+"After: AI visualization". Numero de casa, placa y matricula difuminados.
+Originales sin difuminar en `../04_Assets-Web-Optimizados/proyecto-tia-nicolas/`.
 
 - **Fotografia y video** — `src/components/MediaSlot.astro` marca cada hueco
   con el asset exacto que falta. El marcado final del `<video>` del hero ya

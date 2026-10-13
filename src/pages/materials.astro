@@ -4,16 +4,27 @@ import PageHeader from '../components/PageHeader.astro';
 import MaterialsSection from '../components/MaterialsSection.astro';
 import PaverCatalog from '../components/PaverCatalog.astro';
 import ContactCTA from '../components/ContactCTA.astro';
+import { showMaterials } from '../data/flags';
+
+/*
+ * Sin catalogo, la version publica no enlaza esta pagina (menu, portada y
+ * sitemap; ver data/flags.ts). Si alguien llega por URL directa ve una
+ * cabecera con una bajada que invita a la consulta, no huecos, y la pagina
+ * queda fuera de buscadores.
+ */
 ---
 
 <Base
   title="Materials"
   description="Explore trusted manufacturers and find the perfect style for your project."
+  noindex={!showMaterials}
 >
   <PageHeader
     eyebrow="Premium brands"
     title="The Material Library"
-    lead="Explore trusted manufacturers and find the perfect style for your project."
+    lead={showMaterials
+      ? 'Explore trusted manufacturers and find the perfect style for your project.'
+      : 'We work with trusted manufacturers of premium pavers and natural stone. Schedule a consultation and we will walk you through samples chosen for your project.'}
   />
   <MaterialsSection showLink={false} hideHeading />
   <PaverCatalog />

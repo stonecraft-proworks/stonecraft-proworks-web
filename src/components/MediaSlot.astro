@@ -2,11 +2,16 @@
 /**
  * Hueco de imagen o video PENDIENTE de entrega (decision 1).
  *
- * Se renderiza tambien en produccion, a proposito: un hueco marcado es
- * honesto, una caja vacia o una foto de stock inventada no lo son. Cuando
- * llegue el asset real se sustituye el uso de este componente por un <img>
- * o un <video>; el layout y la proporcion ya son los definitivos.
+ * Solo se ve en desarrollo o en builds de revision (ver data/flags.ts). En
+ * la version publica no se renderiza: si recibe `fallback` muestra esa
+ * fotografia real en su lugar; si no, no pinta nada y el contenedor debe
+ * recomponerse sin el. Cuando llegue el asset real se sustituye el uso de
+ * este componente por un <img> o un <video>; el layout y la proporcion ya
+ * son los definitivos.
  */
+import PhotoImage from './PhotoImage.astro';
+import { showPending } from '../data/flags';
+import type { MediaImage } from '../data/media';
 
 interface Props {
   /** Que asset falta exactamente. Sirve de checklist para el cliente. */
@@ -15,20 +20,52 @@ interface Props {
   ratio?: string;
   kind?: 'image' | 'video';
   class?: string;
+  /** Fotografia real que ocupa el hueco en la version publica. */
+  fallback?: MediaImage;
+  /** Solo se aplican al fallback. */
+  sizes?: string;
+  widths?: number[];
+  loading?: 'lazy' | 'eager';
 }
 
-const { label, ratio = '3 / 2', kind = 'image', class: className = '' } = Astro.props;
+const {
+  label,
+  ratio = '3 / 2',
+  kind = 'image',
+  class: className = '',
+  fallback,
+  sizes,
+  widths,
+  loading,
+} = Astro.props;
 ---
 
-<div
-  class={`media-slot ${className}`}
-  style={`aspect-ratio:${ratio}`}
-  role="img"
-  aria-label={`Pending ${kind}: ${label}`}
->
-  <span class="media-slot__kind t-label">{kind === 'video' ? 'Video' : 'Image'}</span>
-  <span class="media-slot__label">{label}</span>
-</div>
+{
+  !showPending && fallback && (
+    <PhotoImage
+      image={fallback}
+      ratio={ratio}
+      class={className}
+      sizes={sizes}
+      widths={widths}
+      loading={loading}
+    />
+  )
+}
+
+{
+  showPending && (
+    <div
+      class={`media-slot ${className}`}
+      style={`aspect-ratio:${ratio}`}
+      role="img"
+      aria-label={`Pending ${kind}: ${label}`}
+    >
+      <span class="media-slot__kind t-label">{kind === 'video' ? 'Video' : 'Image'}</span>
+      <span class="media-slot__label">{label}</span>
+    </div>
+  )
+}
 
 <style>
   .media-slot {

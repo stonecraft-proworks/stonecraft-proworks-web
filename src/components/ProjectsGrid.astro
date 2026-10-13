@@ -5,6 +5,7 @@ import AiImage from './AiImage.astro';
 import PhotoImage from './PhotoImage.astro';
 import { segments } from '../data/segments';
 import { commercialMedia, residentialMedia } from '../data/media';
+import { showPending } from '../data/flags';
 
 /**
  * Galeria de proyectos.
@@ -25,7 +26,8 @@ const { showLink = true, count = 6 } = Astro.props;
 const commercialProjects = commercialMedia.projects.slice(0, count);
 const residentialProjects = residentialMedia.projects.slice(0, count);
 const residentialPlaceholders = Array.from(
-  { length: Math.max(count - residentialProjects.length, 0) },
+  // En la version publica no hay huecos: la rejilla se queda con las fotos reales.
+  { length: showPending ? Math.max(count - residentialProjects.length, 0) : 0 },
   (_, i) => residentialProjects.length + i + 1,
 );
 ---

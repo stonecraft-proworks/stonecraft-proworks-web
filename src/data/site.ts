@@ -5,6 +5,7 @@
  * No se inventan: la UI que dependa de ellos se degrada de forma visible
  * (ver MobileContactBar y ConsultationForm) en lugar de fingir que funciona.
  */
+import { showMaterials } from './flags';
 
 export interface SocialLinks {
   instagram: string | null;
@@ -63,11 +64,12 @@ export const site: SiteConfig = {
   formEndpoint: null,
 };
 
+/** Materials sale del menu en la version publica hasta que tenga contenido. */
 export const nav = [
   { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },
-  { label: 'Materials', href: '/materials' },
+  ...(showMaterials ? [{ label: 'Materials', href: '/materials' }] : []),
   { label: 'Projects', href: '/projects' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
-] as const;
+];

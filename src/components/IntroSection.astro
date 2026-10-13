@@ -1,5 +1,6 @@
 ---
 import MediaSlot from './MediaSlot.astro';
+import { residentialMedia } from '../data/media';
 
 /** Copy literal del boceto (decision 6: la informacion la manda el boceto). */
 ---
@@ -20,7 +21,12 @@ import MediaSlot from './MediaSlot.astro';
     </div>
 
     <div class="intro__media">
-      <MediaSlot ratio="4 / 5" label="Entryway or facade: signature architectural photograph" />
+      <MediaSlot
+        ratio="4 / 5"
+        label="Entryway or facade: signature architectural photograph"
+        fallback={residentialMedia.standIns.intro}
+        sizes="(min-width: 62rem) 35vw, 100vw"
+      />
     </div>
 
     <aside class="intro__aside surface-sand">

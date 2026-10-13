@@ -48,6 +48,15 @@ import resRaisedSpaDeck from '../assets/residential/pool-raised-spa-deck.jpg';
 import resFireBowl from '../assets/residential/rectangular-pool-fire-bowl.jpg';
 import resOceanfrontPaverPatio from '../assets/residential/oceanfront-paver-patio.jpg';
 
+import vizFrontBefore from '../assets/residential/front-walkway-before.jpg';
+import vizFrontAfter from '../assets/residential/front-walkway-after-ai.jpg';
+import vizDrivewayBefore from '../assets/residential/driveway-before.jpg';
+import vizDrivewayAfter from '../assets/residential/driveway-after-ai.jpg';
+import vizBackyardBefore from '../assets/residential/backyard-before.jpg';
+import vizBackyardAfter from '../assets/residential/backyard-after-ai.jpg';
+import vizSidePathBefore from '../assets/residential/side-path-before.jpg';
+import vizSidePathAfter from '../assets/residential/side-path-after-ai.jpg';
+
 export interface MediaImage {
   src: ImageMetadata;
   alt: string;
@@ -119,6 +128,57 @@ export const residentialMedia = {
     },
   } satisfies { before: MediaImage; after: MediaImage },
 
+  /**
+   * Visualizacion de POTENCIAL (pedido del cliente 2026-10-13): el antes son
+   * fotos reales de una casa tal como esta hoy; el despues es una edicion IA
+   * de esa misma foto mostrando el trabajo con pavers. Se etiqueta como
+   * "AI visualization" en pantalla (CompareSlider afterKind="ai").
+   * Numero de casa, placa de la puerta y matricula difuminados en ambas.
+   * Originales en 04_Assets-Web-Optimizados/proyecto-tia-nicolas/.
+   */
+  visualizedBeforeAfter: [
+    {
+      caption: 'Driveway',
+      before: { src: vizDrivewayBefore, alt: 'Loose gravel driveway with two parked cars in front of the house' },
+      after: { src: vizDrivewayAfter, alt: 'AI visualization of the same driveway finished in herringbone pavers with a charcoal border' },
+    },
+    {
+      caption: 'Backyard',
+      before: { src: vizBackyardBefore, alt: 'Bare dirt backyard with scattered stepping stones under a large ficus tree' },
+      after: { src: vizBackyardAfter, alt: 'AI visualization of the same backyard as a travertine paver patio with a dining set and planted tree ring' },
+    },
+    {
+      caption: 'Front walkway',
+      before: { src: vizFrontBefore, alt: 'Front yard with a narrow plain concrete walkway to the entry' },
+      after: { src: vizFrontAfter, alt: 'AI visualization of the same front yard with a wider travertine paver walkway and charcoal border' },
+    },
+    {
+      caption: 'Side path',
+      before: { src: vizSidePathBefore, alt: 'Side yard of loose gravel and concrete stepping stones between two fences' },
+      after: { src: vizSidePathAfter, alt: 'AI visualization of the same side yard paved wall to wall with sand-colored pavers' },
+    },
+  ] satisfies { caption: string; before: MediaImage; after: MediaImage }[],
+
+  /**
+   * Fotografia real que ocupa huecos pendientes en la version publica (ver
+   * data/flags.ts). Son obra entregada que ya vive en la galeria; se usan
+   * aqui hasta que llegue el asset especifico de cada hueco.
+   */
+  standIns: {
+    hero: {
+      src: resResortPatio,
+      alt: 'Resort-style pool patio with light travertine coping and palm landscaping',
+    },
+    intro: {
+      src: resRaisedSpaDeck,
+      alt: 'Pool with raised spa and travertine paver deck in a tropical yard',
+    },
+    cta: {
+      src: resSpaFireFeature,
+      alt: 'Pool and spa with lit fire bowls on a marble-look paver patio',
+    },
+  } satisfies Record<string, MediaImage>,
+
   /** Por slug de servicio. Solo donde hay fotografia real que lo represente. */
   services: {
     'pool-deck-transformations': {
@@ -132,6 +192,10 @@ export const residentialMedia = {
     'paver-installation': {
       src: resOceanfrontPaverPatio,
       alt: 'Oceanfront paver patio with a checkerboard paver and turf pattern',
+    },
+    'pergolas-exterior-features': {
+      src: resFireBowl,
+      alt: 'Rectangular pool with raised spa and fire bowl on marble-look pavers',
     },
   } satisfies Record<string, MediaImage>,
 

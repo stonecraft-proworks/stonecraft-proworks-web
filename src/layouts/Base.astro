@@ -11,9 +11,11 @@ interface Props {
   description: string;
   /** El selector de audiencia solo se ofrece en la portada. */
   showSelector?: boolean;
+  /** Paginas aun sin contenido publico: fuera de buscadores. */
+  noindex?: boolean;
 }
 
-const { title, description, showSelector = false } = Astro.props;
+const { title, description, showSelector = false, noindex = false } = Astro.props;
 const fullTitle = `${title} | ${site.name}`;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
 const shareImage = new URL('/icon-512.png', Astro.site ?? site.url).href;
@@ -43,6 +45,7 @@ const structuredData = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
 
     <link rel="icon" href="/favicon.ico" sizes="32x32" />

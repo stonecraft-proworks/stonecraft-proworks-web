@@ -1,19 +1,21 @@
 ---
 import SectionLabel from './SectionLabel.astro';
-import PhotoImage from './PhotoImage.astro';
+import CompareSlider from './CompareSlider.astro';
 import { residentialMedia } from '../data/media';
 
 /**
  * Before & After.
  *
- * El control es un <input type="range"> real: teclado, lector de pantalla y
- * arrastre funcionan sin escribir nada a mano. Sin JS la comparativa se
- * queda al 50% y las dos mitades siguen siendo visibles: degrada bien.
+ * Arriba, par REAL de un pool deck (llegado 2026-09-24): mismo fondo, misma
+ * valla y palmeras en las dos fotos. Sin nombre ni direccion del cliente.
  *
- * Par real de un pool deck (llegado 2026-09-24): mismo fondo, misma valla y
- * palmeras en las dos fotos. Sin nombre ni direccion del cliente.
+ * Debajo, "potencial" (pedido por el cliente 2026-10-13): fotos reales de
+ * una casa tal como esta hoy y una visualizacion IA de los mismos espacios
+ * con pavers. El despues va etiquetado como AI visualization y el texto lo
+ * dice: no se presenta como obra ejecutada.
  */
 const { before, after } = residentialMedia.beforeAfter;
+const visualized = residentialMedia.visualizedBeforeAfter;
 ---
 
 <section class="section surface-dark on-dark" id="before-after">
@@ -27,55 +29,43 @@ const { before, after } = residentialMedia.beforeAfter;
       <a href="/projects" class="btn btn-primary">View Projects</a>
     </div>
 
-    <figure class="ba__figure">
-      <div class="ba__viewer" id="ba-viewer">
-        <div class="ba__layer ba__layer--after">
-          <PhotoImage image={after} ratio="16 / 10" />
-          <span class="t-label ba__tag ba__tag--after">After</span>
-        </div>
-
-        <div class="ba__layer ba__layer--before">
-          <PhotoImage image={before} ratio="16 / 10" />
-          <span class="t-label ba__tag ba__tag--before">Before</span>
-        </div>
-
-        <span class="ba__handle" aria-hidden="true"></span>
-
-        <label class="ba__control">
-          <span class="sr-only">Reveal before and after. Drag or use the arrow keys.</span>
-          <input type="range" min="0" max="100" value="50" step="1" id="ba-range" />
-        </label>
-      </div>
-      <figcaption class="sr-only">
-        Comparison slider between the before and after state of a completed project.
-      </figcaption>
-    </figure>
+    <CompareSlider
+      before={before}
+      after={after}
+      description="Comparison slider between the before and after state of a completed project."
+    />
   </div>
+
+  {
+    visualized.length > 0 && (
+      <div class="shell ba__potential">
+        <h3 class="t-h2 ba__potential-title">Picture your home with pavers</h3>
+        <p class="ba__body ba__potential-body">
+          A South Florida home as it is today, next to an AI visualization of the same spaces
+          finished with pavers: cleaner lines, usable outdoor rooms and stronger curb appeal.
+        </p>
+
+        <ul class="ba__pairs">
+          {visualized.map((pair) => (
+            <li>
+              <CompareSlider
+                before={pair.before}
+                after={pair.after}
+                afterKind="ai"
+                ratio="4 / 3"
+                sizes="(min-width: 62rem) 45vw, 100vw"
+                description={`${pair.caption}: real photo today compared with an AI visualization with pavers.`}
+              />
+              <p class="t-label ba__pair-caption">{pair.caption}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
 </section>
 
-<script>
-  const viewer = document.getElementById('ba-viewer');
-  const range = document.getElementById('ba-range');
-
-  if (viewer instanceof HTMLElement && range instanceof HTMLInputElement) {
-    const update = () => viewer.style.setProperty('--split', `${range.value}%`);
-    range.addEventListener('input', update);
-    update();
-  }
-</script>
-
 <style>
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
   .ba__grid {
     display: grid;
     gap: clamp(2.5rem, 5vw, 4rem);
@@ -92,90 +82,34 @@ const { before, after } = residentialMedia.beforeAfter;
     color: color-mix(in srgb, var(--color-warm-cream) 82%, transparent);
   }
 
-  .ba__figure {
+  .ba__potential {
+    margin-top: clamp(4rem, 8vw, 6.5rem);
+  }
+
+  .ba__potential-title {
+    margin: 0 0 1rem;
+  }
+
+  .ba__potential-body {
+    max-width: 56ch;
+  }
+
+  .ba__pairs {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 3vw, 2.5rem);
+    list-style: none;
     margin: 0;
+    padding: 0;
   }
 
-  .ba__viewer {
-    --split: 50%;
-    position: relative;
-    overflow: hidden;
+  .ba__pair-caption {
+    margin: 0.9rem 0 0;
   }
 
-  .ba__layer {
-    position: relative;
-  }
-
-  .ba__layer--before {
-    position: absolute;
-    inset: 0;
-    /* La capa "before" se recorta hasta la posicion del control. */
-    clip-path: inset(0 calc(100% - var(--split)) 0 0);
-  }
-
-  .ba__tag {
-    position: absolute;
-    bottom: 1rem;
-    color: var(--color-warm-cream);
-    background-color: color-mix(in srgb, var(--color-rich-black) 70%, transparent);
-    padding: 0.4rem 0.75rem;
-  }
-
-  .ba__tag--before {
-    left: 1rem;
-  }
-
-  .ba__tag--after {
-    right: 1rem;
-  }
-
-  .ba__handle {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: var(--split);
-    width: 2px;
-    background-color: var(--color-warm-cream);
-    transform: translateX(-1px);
-  }
-
-  .ba__control {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-  }
-
-  .ba__control input[type='range'] {
-    width: 100%;
-    margin: 0;
-    background: transparent;
-    cursor: ew-resize;
-    appearance: none;
-  }
-
-  .ba__control input[type='range']::-webkit-slider-thumb {
-    appearance: none;
-    width: 2.75rem;
-    height: 2.75rem;
-    border-radius: 50%;
-    background-color: var(--color-warm-cream);
-    border: 1px solid var(--color-rich-black);
-    cursor: ew-resize;
-  }
-
-  .ba__control input[type='range']::-moz-range-thumb {
-    width: 2.75rem;
-    height: 2.75rem;
-    border-radius: 50%;
-    background-color: var(--color-warm-cream);
-    border: 1px solid var(--color-rich-black);
-    cursor: ew-resize;
-  }
-
-  .ba__control input[type='range']:focus-visible {
-    outline: 2px solid var(--color-warm-cream);
-    outline-offset: 4px;
+  @media (min-width: 48rem) {
+    .ba__pairs {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
   @media (min-width: 62rem) {

@@ -2,17 +2,22 @@
 import { Image } from 'astro:assets';
 import MediaSlot from './MediaSlot.astro';
 import { pavers, filterFacets, catalogChecklist } from '../data/pavers';
+import { showPending } from '../data/flags';
 
 /**
  * Catalogo de pavers dentro de /materials. Sin contenido (pavers vacio)
  * muestra el estado PENDIENTE: lista de entregables y huecos con la
  * proporcion final de las tarjetas. Con contenido, galeria filtrable.
  * Datos y checklist: src/data/pavers.ts.
+ *
+ * El estado pendiente es interno: en la version publica (data/flags.ts) la
+ * seccion no se renderiza hasta que haya al menos un paver.
  */
 const facets = filterFacets();
 const hasContent = pavers.length > 0;
 ---
 
+{(hasContent || showPending) && (
 <section class="section" id="paver-catalog" aria-labelledby="paver-catalog-title">
   <div class="shell">
     <p class="t-label catalog__eyebrow">Paver catalog</p>
@@ -96,6 +101,7 @@ const hasContent = pavers.length > 0;
     }
   </div>
 </section>
+)}
 
 <script>
   import { bindPaverFilter } from '../scripts/paver-filter';

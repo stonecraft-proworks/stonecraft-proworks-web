@@ -1,0 +1,178 @@
+---
+import PhotoImage from './PhotoImage.astro';
+import type { MediaImage } from '../data/media';
+
+/**
+ * Comparador antes/despues reutilizable.
+ *
+ * El control es un <input type="range"> real: teclado, lector de pantalla y
+ * arrastre funcionan sin escribir nada a mano. Sin JS la comparativa se
+ * queda al 50% y las dos mitades siguen siendo visibles: degrada bien.
+ *
+ * `afterKind="ai"` marca el despues como visualizacion IA en su etiqueta:
+ * mismo contrato que <AiImage> (2026-09-13), no es obra ejecutada.
+ */
+interface Props {
+  before: MediaImage;
+  after: MediaImage;
+  afterKind?: 'photo' | 'ai';
+  ratio?: string;
+  sizes?: string;
+  /** Texto para lectores de pantalla. */
+  description: string;
+}
+
+const {
+  before,
+  after,
+  afterKind = 'photo',
+  ratio = '16 / 10',
+  sizes = '(min-width: 62rem) 60vw, 100vw',
+  description,
+} = Astro.props;
+---
+
+<figure class="cmp">
+  <div class="cmp__viewer" data-compare>
+    <div class="cmp__layer">
+      <PhotoImage image={after} ratio={ratio} sizes={sizes} />
+      <span class="t-label cmp__tag cmp__tag--after">After</span>
+    </div>
+
+    <div class="cmp__layer cmp__layer--before">
+      <PhotoImage image={before} ratio={ratio} sizes={sizes} />
+      <span class="t-label cmp__tag cmp__tag--before">Before</span>
+    </div>
+
+    <span class="cmp__handle" aria-hidden="true"></span>
+
+    {/* Fuera de las capas: visible sea cual sea la posicion del control. */}
+    {afterKind === 'ai' && <span class="t-label cmp__ai">After: AI visualization</span>}
+
+    <label class="cmp__control">
+      <span class="sr-only">Reveal before and after. Drag or use the arrow keys.</span>
+      <input type="range" min="0" max="100" value="50" step="1" />
+    </label>
+  </div>
+  <figcaption class="sr-only">{description}</figcaption>
+</figure>
+
+<script>
+  for (const viewer of document.querySelectorAll<HTMLElement>('[data-compare]')) {
+    const range = viewer.querySelector('input[type="range"]');
+    if (!(range instanceof HTMLInputElement)) continue;
+    const update = () => viewer.style.setProperty('--split', `${range.value}%`);
+    range.addEventListener('input', update);
+    update();
+  }
+</script>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .cmp {
+    margin: 0;
+  }
+
+  .cmp__viewer {
+    --split: 50%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cmp__layer {
+    position: relative;
+  }
+
+  .cmp__layer--before {
+    position: absolute;
+    inset: 0;
+    /* La capa "before" se recorta hasta la posicion del control. */
+    clip-path: inset(0 calc(100% - var(--split)) 0 0);
+  }
+
+  .cmp__tag {
+    position: absolute;
+    bottom: 1rem;
+    color: var(--color-warm-cream);
+    background-color: color-mix(in srgb, var(--color-rich-black) 70%, transparent);
+    padding: 0.4rem 0.75rem;
+  }
+
+  .cmp__tag--before {
+    left: 1rem;
+  }
+
+  .cmp__tag--after {
+    right: 1rem;
+  }
+
+  .cmp__ai {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.625rem;
+    color: var(--color-warm-cream);
+    background-color: color-mix(in srgb, var(--color-rich-black) 70%, transparent);
+    pointer-events: none;
+  }
+
+  .cmp__handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--split);
+    width: 2px;
+    background-color: var(--color-warm-cream);
+    transform: translateX(-1px);
+  }
+
+  .cmp__control {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .cmp__control input[type='range'] {
+    width: 100%;
+    margin: 0;
+    background: transparent;
+    cursor: ew-resize;
+    appearance: none;
+  }
+
+  .cmp__control input[type='range']::-webkit-slider-thumb {
+    appearance: none;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background-color: var(--color-warm-cream);
+    border: 1px solid var(--color-rich-black);
+    cursor: ew-resize;
+  }
+
+  .cmp__control input[type='range']::-moz-range-thumb {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background-color: var(--color-warm-cream);
+    border: 1px solid var(--color-rich-black);
+    cursor: ew-resize;
+  }
+
+  .cmp__control input[type='range']:focus-visible {
+    outline: 2px solid var(--color-warm-cream);
+    outline-offset: 4px;
+  }
+</style>

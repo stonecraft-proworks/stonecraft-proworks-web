@@ -1,6 +1,7 @@
 ---
 import SectionLabel from './SectionLabel.astro';
 import MediaSlot from './MediaSlot.astro';
+import { showPending } from '../data/flags';
 
 /**
  * The Material Library. Titular y bajada literales del boceto.
@@ -11,6 +12,9 @@ import MediaSlot from './MediaSlot.astro';
  * (decision 12, pendiente). En su lugar quedan huecos marcados con la
  * proporcion final. Cuando el cliente confirme autorizacion y entregue los
  * logotipos, se sustituyen sin tocar el layout.
+ *
+ * Mientras solo haya huecos, la seccion entera no se renderiza en la version
+ * publica (data/flags.ts).
  */
 interface Props {
   showLink?: boolean;
@@ -22,6 +26,7 @@ const { showLink = true, hideHeading = false } = Astro.props;
 const slots = ['Manufacturer 1', 'Manufacturer 2', 'Manufacturer 3', 'Manufacturer 4'];
 ---
 
+{showPending && (
 <section class="section surface-sand" id="materials">
   <div class="shell">
     {
@@ -57,6 +62,7 @@ const slots = ['Manufacturer 1', 'Manufacturer 2', 'Manufacturer 3', 'Manufactur
     </ul>
   </div>
 </section>
+)}
 
 <style>
   .materials__intro {

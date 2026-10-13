@@ -6,6 +6,7 @@ import ProcessSteps from '../components/ProcessSteps.astro';
 import ContactCTA from '../components/ContactCTA.astro';
 import MediaSlot from '../components/MediaSlot.astro';
 import SectionLabel from '../components/SectionLabel.astro';
+import { showPending } from '../data/flags';
 
 /*
  * La narrativa de esta pagina (historia de la compania, equipo, anos de
@@ -23,16 +24,21 @@ import SectionLabel from '../components/SectionLabel.astro';
 
   <IntroSection />
 
-  <section class="section surface-sand" id="story">
-    <div class="shell">
-      <SectionLabel label="Our story" />
-      <MediaSlot
-        kind="video"
-        ratio="16 / 9"
-        label="Brand story film, linked from the home page hero (Watch Our Story)"
-      />
-    </div>
-  </section>
+  {/* Solo el video pendiente: fuera de la version publica hasta que llegue. */}
+  {
+    showPending && (
+      <section class="section surface-sand" id="story">
+        <div class="shell">
+          <SectionLabel label="Our story" />
+          <MediaSlot
+            kind="video"
+            ratio="16 / 9"
+            label="Brand story film, linked from the home page hero (Watch Our Story)"
+          />
+        </div>
+      </section>
+    )
+  }
 
   <ProcessSteps />
   <ContactCTA />

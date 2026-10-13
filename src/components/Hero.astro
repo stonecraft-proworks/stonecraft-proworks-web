@@ -3,7 +3,8 @@ import MediaSlot from './MediaSlot.astro';
 import AiImage from './AiImage.astro';
 import { segments } from '../data/segments';
 import { site } from '../data/site';
-import { commercialMedia } from '../data/media';
+import { commercialMedia, residentialMedia } from '../data/media';
+import { showPending } from '../data/flags';
 
 /**
  * Portada. Copy del boceto (decision 6), tipografia de las guidelines
@@ -39,6 +40,10 @@ import { commercialMedia } from '../data/media';
               kind="video"
               ratio="16 / 9"
               class="hero__slot"
+              fallback={residentialMedia.standIns.hero}
+              loading="eager"
+              sizes="100vw"
+              widths={[768, 1280, 1920, 2560]}
               label={`Hero ${segment.label.toLowerCase()}: cinematic loop (desktop + short mobile cut) with poster frame`}
             />
           )}
@@ -69,13 +74,18 @@ import { commercialMedia } from '../data/media';
       <a href="/contact" class="btn btn-primary">Start Your Project</a>
       <a href="/projects" class="btn btn-outline">Explore Our Work</a>
 
-      {/* "Watch Our Story" confirmado (decision 13); el video sigue pendiente. */}
-      <a href="/about#story" class="hero__story">
-        <span class="hero__play" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 7l9 5-9 5z" /></svg>
-        </span>
-        <span class="t-label">Watch Our Story</span>
-      </a>
+      {/* "Watch Our Story" confirmado (decision 13); el video sigue pendiente,
+          asi que el enlace solo aparece fuera de la version publica. */}
+      {
+        showPending && (
+          <a href="/about#story" class="hero__story">
+            <span class="hero__play" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 7l9 5-9 5z" /></svg>
+            </span>
+            <span class="t-label">Watch Our Story</span>
+          </a>
+        )
+      }
     </div>
   </div>
 
@@ -142,7 +152,8 @@ import { commercialMedia } from '../data/media';
      object-fit: cover. :global porque la raiz de MediaSlot es otro
      componente y no lleva el scope de este. */
   .hero__media-layer :global(.media-slot),
-  .hero__media-layer :global(.ai-image) {
+  .hero__media-layer :global(.ai-image),
+  .hero__media-layer :global(.photo-image) {
     height: 100%;
     aspect-ratio: auto;
   }

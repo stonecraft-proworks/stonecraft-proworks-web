@@ -1,6 +1,7 @@
 ---
 import MediaSlot from './MediaSlot.astro';
 import { site } from '../data/site';
+import { residentialMedia } from '../data/media';
 
 /** Copy y estructura del boceto. Datos confirmados en la decision 13. */
 ---
@@ -21,6 +22,8 @@ import { site } from '../data/site';
         kind="image"
         ratio="4 / 3"
         label="Outdoor living at dusk: fire feature and seating"
+        fallback={residentialMedia.standIns.cta}
+        sizes="(min-width: 62rem) 35vw, 100vw"
       />
     </div>
 
@@ -117,9 +120,12 @@ import { site } from '../data/site';
 
     .cta__media {
       align-self: stretch;
+      /* Sin esto el ancho intrinseco de la foto ensancha la columna. */
+      min-width: 0;
     }
 
-    .cta__media :global(.media-slot) {
+    .cta__media :global(.media-slot),
+    .cta__media :global(.photo-image) {
       height: 100%;
     }
   }
