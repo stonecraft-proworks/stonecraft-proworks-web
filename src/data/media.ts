@@ -8,10 +8,16 @@
  * proyectos de piscina y patios ejecutados. No llevan etiqueta porque son
  * obra real (ver componente PhotoImage, sin el aviso "AI visualization" de
  * AiImage). Solo se etiquetan por TIPO de espacio, nunca con nombre ni
- * direccion del cliente: esos datos no se entregaron. Outdoor kitchens,
- * cleaning/sealing/restoration y stone veneer siguen sin fotografia propia
- * y se quedan con el hueco marcado hasta que llegue material de esas
- * categorias.
+ * direccion del cliente: esos datos no se entregaron. Outdoor kitchens
+ * llego el 2026-10-14. Cleaning/sealing/restoration y stone veneer siguen
+ * sin fotografia propia y se quedan con el hueco marcado hasta que llegue
+ * material de esas categorias.
+ *
+ * Limpieza de fotos (pedido del cliente 2026-10-14): en las fotos de obra se
+ * quitaron con IA solo objetos que hacian ruido (maquinas de limpieza de
+ * piscina, mangueras, cables, sillas apiladas, recipientes). El trabajo
+ * entregado (pavers, mesones, piscinas) no se altera. Originales en
+ * ../photos gallery Stone craft/.
  *
  * Viven en src/assets (no en public/) para que astro:assets las sirva en
  * WebP responsivo. Cuando llegue fotografia real de un proyecto comercial
@@ -47,6 +53,10 @@ import resTravertineDeck from '../assets/residential/travertine-pool-deck.jpg';
 import resRaisedSpaDeck from '../assets/residential/pool-raised-spa-deck.jpg';
 import resFireBowl from '../assets/residential/rectangular-pool-fire-bowl.jpg';
 import resOceanfrontPaverPatio from '../assets/residential/oceanfront-paver-patio.jpg';
+import resKitchenLShaped from '../assets/residential/outdoor-kitchen-l-shaped.jpg';
+import resKitchenIsland from '../assets/residential/outdoor-kitchen-island.jpg';
+import resKitchenBar from '../assets/residential/outdoor-kitchen-bar-counter.jpg';
+import resCoveredPatio from '../assets/residential/covered-patio-pool-deck.jpg';
 
 import vizFrontBefore from '../assets/residential/front-walkway-before.jpg';
 import vizFrontAfter from '../assets/residential/front-walkway-after-ai.jpg';
@@ -197,15 +207,23 @@ export const residentialMedia = {
       src: resFireBowl,
       alt: 'Rectangular pool with raised spa and fire bowl on marble-look pavers',
     },
+    'outdoor-kitchens': {
+      src: resKitchenLShaped,
+      alt: 'L-shaped outdoor kitchen with built-in grill, black granite counters and stone-look cabinets',
+    },
   } satisfies Record<string, MediaImage>,
 
   projects: [
     { src: resLapPool, caption: 'Lap pool & paver walkway', alt: 'Brick paver walkway beside a narrow lap pool with garden statuary' },
-    { src: resLagoonPool, caption: 'Tropical lagoon pool', alt: 'Freeform lagoon pool with a stone waterfall and thatched-roof cabana' },
+    { src: resKitchenLShaped, caption: 'Outdoor kitchen', alt: 'L-shaped outdoor kitchen with built-in grill, black granite counters and stone-look cabinets' },
     { src: resOceanfrontInfinity, caption: 'Oceanfront pool deck', alt: 'Oceanfront infinity pool with large-format paver decking' },
     { src: resCabanaBar, caption: 'Poolside bar & lounge', alt: 'Covered poolside bar and lounge with paver and turf-inlay flooring' },
+    { src: resCoveredPatio, caption: 'Pool deck & covered patio', alt: 'Marble paver pool deck beside a covered patio with stone columns and artificial turf' },
+    { src: resLagoonPool, caption: 'Tropical lagoon pool', alt: 'Freeform lagoon pool with a stone waterfall and thatched-roof cabana' },
+    { src: resKitchenIsland, caption: 'Outdoor kitchen & bar island', alt: 'Outdoor kitchen with grill and a black granite bar island on marble pavers' },
     { src: resResortPatio, caption: 'Resort-style pool patio', alt: 'Resort-style pool patio with light travertine coping and palm landscaping' },
     { src: resModernSpa, caption: 'Modern pool & spa patio', alt: 'Modern pool and raised spa with turf-striped paver patio' },
+    { src: resKitchenBar, caption: 'Outdoor kitchen bar counter', alt: 'Outdoor kitchen bar counter in black granite with built-in grill and marble pavers' },
     { src: resSpaFireFeature, caption: 'Pool, spa & fire feature', alt: 'Pool and spa with lit fire bowls on a marble-look paver patio' },
     { src: resOceanfrontFountains, caption: 'Oceanfront pool with fountains', alt: 'Oceanfront pool with fountain jets and glass-tile waterline' },
     { src: resTravertineDeck, caption: 'Travertine pool deck', alt: 'Curved travertine pool deck with paver steps into the water' },
