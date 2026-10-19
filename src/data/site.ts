@@ -69,7 +69,7 @@ export const nav = [
   { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },
   ...(showMaterials ? [{ label: 'Materials', href: '/materials' }] : []),
-  { label: 'Projects', href: '/projects' },
+  { label: 'Inspiration', href: '/projects' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ];

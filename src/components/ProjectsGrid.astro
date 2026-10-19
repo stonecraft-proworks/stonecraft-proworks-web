@@ -8,7 +8,11 @@ import { commercialMedia, residentialMedia } from '../data/media';
 import { showPending } from '../data/flags';
 
 /**
- * Galeria de proyectos.
+ * Galeria "Outdoor Living Inspiration" (pedido del cliente 2026-10-16:
+ * StoneCraft aun construye su portfolio, asi que no se llama "Selected
+ * work"). Dos categorias visibles a la vez, sin depender del segmento:
+ * Residential Inspiration y Commercial Concepts. Las imagenes IA llevan su
+ * etiqueta (AiImage); nada se presenta como obra comercial ejecutada.
  *
  * Comercial: visualizaciones IA con pie por TIPO de proyecto (acordado
  * 2026-09-13). Residencial: fotografia real de obra ejecutada (llegada
@@ -35,14 +39,18 @@ const residentialPlaceholders = Array.from(
 <section class="section" id="projects">
   <div class="shell">
     <SectionLabel
-      label="Selected work"
-      linkLabel={showLink ? 'View all projects' : undefined}
+      label="Outdoor Living Inspiration"
+      linkLabel={showLink ? 'View the gallery' : undefined}
       linkHref={showLink ? '/projects' : undefined}
     />
 
     {
       segments.map((segment) => (
-        <ul class="projects__grid" data-seg={segment.id}>
+        <div class="projects__category">
+        <h2 class="t-h3 projects__heading">
+          {segment.id === 'commercial' ? 'Commercial Concepts' : 'Residential Inspiration'}
+        </h2>
+        <ul class="projects__grid">
           {segment.id === 'commercial'
             ? commercialProjects.map((project) => (
                 <li class="projects__item">
@@ -77,12 +85,21 @@ const residentialPlaceholders = Array.from(
               </>
             )}
         </ul>
+        </div>
       ))
     }
   </div>
 </section>
 
 <style>
+  .projects__category + .projects__category {
+    margin-top: clamp(3.5rem, 7vw, 6rem);
+  }
+
+  .projects__heading {
+    margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
+  }
+
   .projects__grid {
     display: grid;
     grid-template-columns: 1fr;

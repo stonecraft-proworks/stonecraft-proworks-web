@@ -5,8 +5,10 @@ import { serviceBySlug } from '../data/services';
 import { site } from '../data/site';
 
 /**
- * Entrada Commercial: bloque con un boton que abre el formulario de contacto
- * comercial (pendiente anotado 2026-09-30).
+ * Entrada Commercial: seccion "A Reliable Partner" y formulario de bid
+ * request (pedido del cliente 2026-10-16: empresa, contacto, ubicacion,
+ * servicios, fecha de inicio, fecha limite del bid y planos). Lo abren este
+ * boton y los dos del hero comercial (cualquier [data-commercial-open]).
  *
  * Solo se ve en el segmento Commercial (data-seg, ver global.css). El
  * formulario vive en un <dialog> nativo: showModal() da foco atrapado, Escape
@@ -28,6 +30,15 @@ const serviceOptions = (commercial?.homeServices ?? [])
   .map((slug) => serviceBySlug(slug))
   .filter((s) => s !== undefined);
 
+const roles = [
+  'General contractor',
+  'Developer',
+  'Property manager',
+  'Property owner',
+  'Architect or designer',
+  'Other',
+];
+
 const propertyTypes = [
   'Retail plaza or shopping center',
   'HOA or condominium association',
@@ -35,6 +46,26 @@ const propertyTypes = [
   'Office or business park',
   'Mixed-use or new development',
   'Other',
+];
+
+/**
+ * "A Reliable Partner" (pedido del cliente 2026-10-16). Solo describe
+ * servicios y como se cotiza: no se inventan proyectos ni experiencia
+ * comercial previa.
+ */
+const partnerPoints = [
+  {
+    title: 'What we bid on',
+    text: 'Paver installation, pool decks, stone veneer and architectural surfaces, commercial exterior improvements, and cleaning, sealing and restoration.',
+  },
+  {
+    title: 'How we estimate',
+    text: 'Send us your drawings or specifications. We review the scope, visit the site when needed, and return a clear, itemized proposal by your bid deadline.',
+  },
+  {
+    title: 'Open to new opportunities',
+    text: 'New construction, renovations and maintenance work. If you have a project out to bid, we are glad to review it.',
+  },
 ];
 ---
 
@@ -44,22 +75,28 @@ const propertyTypes = [
 
     <div class="commercial-inquiry__grid">
       <div>
-        <h2 class="t-h2">Planning a commercial or community property?</h2>
+        <h2 class="t-h2">A Reliable Partner for Your Next Project</h2>
         <p class="measure commercial-inquiry__lead">
-          Plazas, developments and common areas. Tell us about the property and what it needs
-          and our team will follow up with the next step.
+          We work alongside general contractors, developers, property managers and commercial
+          property owners throughout Palm Beach County and South Florida.
         </p>
       </div>
 
-      <a
-        href="/contact"
-        class="btn btn-solid"
-        id="commercial-form-open"
-        aria-haspopup="dialog"
-      >
-        Contact Our Commercial Team
+      <a href="/contact" class="btn btn-solid" data-commercial-open aria-haspopup="dialog">
+        Invite Us to Bid
       </a>
     </div>
+
+    <ul class="commercial-inquiry__points">
+      {
+        partnerPoints.map((point) => (
+          <li class="commercial-inquiry__point">
+            <h3 class="t-label commercial-inquiry__point-title">{point.title}</h3>
+            <p class="commercial-inquiry__point-text">{point.text}</p>
+          </li>
+        ))
+      }
+    </ul>
   </div>
 
   <dialog class="modal" id="commercial-dialog" aria-labelledby="commercial-dialog-title">
@@ -71,20 +108,21 @@ const propertyTypes = [
         </svg>
       </button>
 
-      <h2 class="t-h2 modal__title" id="commercial-dialog-title">Commercial Project Inquiry</h2>
+      <h2 class="t-h2 modal__title" id="commercial-dialog-title">Commercial Bid Request</h2>
       <p class="modal__lead">
-        Share a few details about the property and we will get back to you.
+        Tell us about the project and attach drawings or specifications if you have them. We will review it and follow up.
       </p>
 
       <form
         class="form"
         id="commercial-form"
         method="post"
+        enctype="multipart/form-data"
         action={site.formEndpoint ?? undefined}
         novalidate
       >
         <input type="hidden" name="segment" value="commercial" />
-        <input type="hidden" name="_subject" value="New commercial inquiry - StoneCraft ProWorks" />
+        <input type="hidden" name="_subject" value="New commercial bid request - StoneCraft ProWorks" />
 
         {
           !enabled && (
@@ -101,13 +139,13 @@ const propertyTypes = [
 
         <div class="form__row">
           <div class="field">
-            <label class="t-label field__label" for="c-name">Full name</label>
-            <input class="field__input" type="text" id="c-name" name="name" required autocomplete="name" />
+            <label class="t-label field__label" for="c-company">Company name</label>
+            <input class="field__input" type="text" id="c-company" name="company" required autocomplete="organization" />
           </div>
 
           <div class="field">
-            <label class="t-label field__label" for="c-company">Company or property</label>
-            <input class="field__input" type="text" id="c-company" name="company" required autocomplete="organization" />
+            <label class="t-label field__label" for="c-name">Contact name</label>
+            <input class="field__input" type="text" id="c-name" name="name" required autocomplete="name" />
           </div>
         </div>
 
@@ -118,33 +156,83 @@ const propertyTypes = [
           </div>
 
           <div class="field">
-            <label class="t-label field__label" for="c-phone">
-              Phone <span class="field__optional">(optional)</span>
-            </label>
-            <input class="field__input" type="tel" id="c-phone" name="phone" autocomplete="tel" />
+            <label class="t-label field__label" for="c-phone">Phone</label>
+            <input class="field__input" type="tel" id="c-phone" name="phone" required autocomplete="tel" />
           </div>
         </div>
 
         <div class="form__row">
           <div class="field">
-            <label class="t-label field__label" for="c-property">Property type</label>
-            <select class="field__input" id="c-property" name="propertyType" required>
+            <label class="t-label field__label" for="c-role">Your role</label>
+            <select class="field__input" id="c-role" name="role" required>
               <option value="">Select an option</option>
-              {propertyTypes.map((type) => <option value={type}>{type}</option>)}
+              {roles.map((role) => <option value={role}>{role}</option>)}
             </select>
           </div>
 
           <div class="field">
-            <label class="t-label field__label" for="c-service">Service of interest</label>
-            <select class="field__input" id="c-service" name="service" required>
-              <option value="">Select a service</option>
-              {serviceOptions.map((service) => <option value={service.slug}>{service.name}</option>)}
+            <label class="t-label field__label" for="c-property">
+              Property type <span class="field__optional">(optional)</span>
+            </label>
+            <select class="field__input" id="c-property" name="propertyType">
+              <option value="">Select an option</option>
+              {propertyTypes.map((type) => <option value={type}>{type}</option>)}
             </select>
           </div>
         </div>
 
         <div class="field">
-          <label class="t-label field__label" for="c-message">Tell us about the project</label>
+          <label class="t-label field__label" for="c-location">Project location</label>
+          <input class="field__input" type="text" id="c-location" name="location" required placeholder="City or address" />
+        </div>
+
+        <fieldset class="field field__group">
+          <legend class="t-label field__label">Services needed</legend>
+          <div class="field__checks">
+            {
+              serviceOptions.map((service) => (
+                <label class="field__check">
+                  <input type="checkbox" name="services" value={service.name} />
+                  <span>{service.name}</span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <div class="form__row">
+          <div class="field">
+            <label class="t-label field__label" for="c-start">
+              Estimated start date <span class="field__optional">(optional)</span>
+            </label>
+            <input class="field__input" type="date" id="c-start" name="startDate" />
+          </div>
+
+          <div class="field">
+            <label class="t-label field__label" for="c-deadline">
+              Bid deadline <span class="field__optional">(optional)</span>
+            </label>
+            <input class="field__input" type="date" id="c-deadline" name="bidDeadline" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="t-label field__label" for="c-files">
+            Drawings or specifications <span class="field__optional">(optional: PDF, DWG or images)</span>
+          </label>
+          <input class="field__input field__file" type="file" id="c-files" name="attachments" multiple
+            accept=".pdf,.dwg,.dxf,.jpg,.jpeg,.png" />
+        </div>
+
+        <div class="field">
+          <label class="t-label field__label" for="c-plans-link">
+            Or a link to the plans <span class="field__optional">(optional: Dropbox, Google Drive...)</span>
+          </label>
+          <input class="field__input" type="url" id="c-plans-link" name="plansLink" placeholder="https://" />
+        </div>
+
+        <div class="field">
+          <label class="t-label field__label" for="c-message">Project scope and details</label>
           <textarea class="field__input field__textarea" id="c-message" name="message" rows="4" required
           ></textarea>
         </div>
@@ -154,7 +242,7 @@ const propertyTypes = [
         <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="form__trap" aria-hidden="true" />
 
         <button type="submit" class="btn btn-solid form__submit" disabled={!enabled}>
-          Send Inquiry
+          Submit Bid Request
         </button>
       </form>
     </div>
@@ -165,18 +253,23 @@ const propertyTypes = [
   import { bindFormValidation } from '../scripts/form-validation';
   import { bindFormSubmit } from '../scripts/form-submit';
 
-  const opener = document.getElementById('commercial-form-open');
+  const openers = document.querySelectorAll<HTMLElement>('[data-commercial-open]');
   const dialog = document.getElementById('commercial-dialog');
   const closer = document.getElementById('commercial-form-close');
   const form = document.getElementById('commercial-form');
   const errorBox = document.getElementById('commercial-form-errors');
 
-  if (opener && dialog instanceof HTMLDialogElement) {
-    // Con JS el enlace pasa a ser un boton que abre el dialogo.
-    opener.setAttribute('role', 'button');
-    opener.addEventListener('click', (event) => {
-      event.preventDefault();
-      dialog.showModal();
+  if (dialog instanceof HTMLDialogElement) {
+    // Con JS cada enlace pasa a ser un boton que abre el dialogo (los del
+    // hero comercial y el de esta seccion). Se recuerda cual lo abrio.
+    let lastOpener: HTMLElement | null = null;
+    openers.forEach((opener) => {
+      opener.setAttribute('role', 'button');
+      opener.addEventListener('click', (event) => {
+        event.preventDefault();
+        lastOpener = opener;
+        dialog.showModal();
+      });
     });
 
     closer?.addEventListener('click', () => dialog.close());
@@ -187,12 +280,12 @@ const propertyTypes = [
     });
 
     // Al cerrar, el foco vuelve al boton que lo abrio.
-    dialog.addEventListener('close', () => opener.focus());
+    dialog.addEventListener('close', () => lastOpener?.focus());
   }
 
   if (form instanceof HTMLFormElement && errorBox) {
     bindFormValidation(form, errorBox);
-    bindFormSubmit(form, 'Thank you. We received your inquiry and our commercial team will get back to you shortly.');
+    bindFormSubmit(form, 'Thank you. We received your bid request and will review it and follow up shortly.');
   }
 </script>
 
@@ -201,6 +294,59 @@ const propertyTypes = [
     display: grid;
     gap: 2rem;
     align-items: center;
+  }
+
+  .commercial-inquiry__points {
+    display: grid;
+    gap: 2rem;
+    margin: clamp(2.5rem, 5vw, 4rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .commercial-inquiry__point {
+    padding-top: 1.25rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-charcoal) 25%, transparent);
+  }
+
+  .commercial-inquiry__point-title {
+    margin: 0 0 0.75rem;
+    color: var(--color-rich-black);
+  }
+
+  .commercial-inquiry__point-text {
+    margin: 0;
+    color: var(--color-charcoal);
+  }
+
+  .field__group {
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+
+  .field__checks {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .field__check {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.9375rem;
+    cursor: pointer;
+  }
+
+  .field__check input {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-top: 0.15rem;
+    accent-color: var(--color-rich-black);
+  }
+
+  .field__file {
+    padding-block: 0.6rem;
   }
 
   .commercial-inquiry__lead {
@@ -386,6 +532,10 @@ const propertyTypes = [
   }
 
   @media (min-width: 40rem) {
+    .field__checks {
+      grid-template-columns: 1fr 1fr;
+    }
+
     .form__row {
       grid-template-columns: 1fr 1fr;
     }
@@ -395,6 +545,11 @@ const propertyTypes = [
     .commercial-inquiry__grid {
       grid-template-columns: 1fr auto;
       gap: 4rem;
+    }
+
+    .commercial-inquiry__points {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5rem;
     }
   }
 </style>

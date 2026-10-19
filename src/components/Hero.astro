@@ -1,5 +1,4 @@
 ---
-import MediaSlot from './MediaSlot.astro';
 import AiImage from './AiImage.astro';
 import { segments } from '../data/segments';
 import { site } from '../data/site';
@@ -36,16 +35,18 @@ import { showPending } from '../data/flags';
               widths={[768, 1280, 1920, 2560]}
             />
           ) : (
-            <MediaSlot
-              kind="video"
-              ratio="16 / 9"
-              class="hero__slot"
-              fallback={residentialMedia.standIns.hero}
-              loading="eager"
-              sizes="100vw"
-              widths={[768, 1280, 1920, 2560]}
-              label={`Hero ${segment.label.toLowerCase()}: cinematic loop (desktop + short mobile cut) with poster frame`}
-            />
+            <div class="hero__slides" data-hero-slides>
+              {residentialMedia.heroSlides.map((slide, i) => (
+                <AiImage
+                  image={slide}
+                  ratio="auto"
+                  class={`hero__slot hero__slide${i === 0 ? ' is-active' : ''}`}
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                  sizes="100vw"
+                  widths={[768, 1280, 1536]}
+                />
+              ))}
+            </div>
           )}
         </div>
       ))
@@ -65,14 +66,35 @@ import { showPending } from '../data/flags';
     <div class="hero__scrim" aria-hidden="true"></div>
   </div>
 
-  <div class="shell hero__content">
+  {/*
+    Copy por segmento (pedido del cliente 2026-10-16). Sin portfolio propio
+    todavia: nada de "Explore Our Work". Comercial se presenta como servicio,
+    sin inventar proyectos ni experiencia previa; los dos botones abren el
+    formulario de bid (CommercialInquiry, data-commercial-open).
+  */}
+  <div class="shell hero__content" data-seg="commercial">
+    <p class="t-label hero__eyebrow">Built for properties. Designed for performance.</p>
+    <h1 class="t-h1 hero__title hero__title--wide">Commercial Hardscape Solutions</h1>
+    <p class="measure hero__lead">
+      StoneCraft ProWorks welcomes opportunities to collaborate with general contractors,
+      developers, property managers, and commercial property owners throughout Palm Beach
+      County and South Florida.
+    </p>
+
+    <div class="hero__actions">
+      <a href="#commercial-contact" class="btn btn-primary" data-commercial-open>Invite Us to Bid</a>
+      <a href="#commercial-contact" class="btn btn-outline" data-commercial-open>Discuss a Project</a>
+    </div>
+  </div>
+
+  <div class="shell hero__content" data-seg="residential">
     <p class="t-label hero__eyebrow">Timeless spaces for a brighter tomorrow</p>
     <h1 class="t-h1 hero__title">Outdoor Living<br />Elevated.</h1>
     <p class="t-label hero__tagline">Built to last, crafted to impress.</p>
 
     <div class="hero__actions">
       <a href="/contact" class="btn btn-primary">Start Your Project</a>
-      <a href="/projects" class="btn btn-outline">Explore Our Work</a>
+      <a href="/services" class="btn btn-outline">Explore Our Services</a>
 
       {/* "Watch Our Story" confirmado (decision 13); el video sigue pendiente,
           asi que el enlace solo aparece fuera de la version publica. */}
@@ -124,6 +146,20 @@ import { showPending } from '../data/flags';
 
   const bar = document.querySelector('.hero__segments');
   if (bar) bindSegmentChoices(bar);
+
+  // Rotacion del hero residencial: fundido cada 7 s. Con movimiento
+  // reducido o una sola imagen no rota (se queda la primera, sin zoom).
+  const slides = Array.from(document.querySelectorAll<HTMLElement>('[data-hero-slides] .hero__slide'));
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (slides.length > 1 && !reduced) {
+    let current = 0;
+    setInterval(() => {
+      if (document.hidden) return;
+      slides[current]?.classList.remove('is-active');
+      current = (current + 1) % slides.length;
+      slides[current]?.classList.add('is-active');
+    }, 7000);
+  }
 </script>
 
 <style>
@@ -165,6 +201,42 @@ import { showPending } from '../data/flags';
     right: 0.75rem;
   }
 
+  /* Escenas apiladas: solo la activa es visible. Fundido de 1.6 s y zoom
+     lento (Ken Burns) mientras esta en pantalla. */
+  .hero__slides {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero__slides :global(.hero__slide) {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1.6s ease;
+  }
+
+  .hero__slides :global(.hero__slide.is-active) {
+    opacity: 1;
+  }
+
+  .hero__slides :global(.hero__slide img) {
+    transform: scale(1);
+    transition: transform 9s ease-out;
+  }
+
+  .hero__slides :global(.hero__slide.is-active img) {
+    transform: scale(1.06);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__slides :global(.hero__slide),
+    .hero__slides :global(.hero__slide img) {
+      transition: none;
+      transform: none;
+    }
+  }
+
   /* Con movimiento reducido no se reproduce el video: queda el poster. */
   @media (prefers-reduced-motion: reduce) {
     .hero__video {
@@ -201,6 +273,15 @@ import { showPending } from '../data/flags';
   .hero__title {
     margin: 0 0 1.5rem;
     max-width: 16ch;
+  }
+
+  .hero__title--wide {
+    max-width: 18ch;
+  }
+
+  .hero__lead {
+    margin: 0 0 2.5rem;
+    color: var(--color-warm-cream);
   }
 
   .hero__tagline {

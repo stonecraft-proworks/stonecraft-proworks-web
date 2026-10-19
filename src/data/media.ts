@@ -58,6 +58,10 @@ import resKitchenIsland from '../assets/residential/outdoor-kitchen-island.jpg';
 import resKitchenBar from '../assets/residential/outdoor-kitchen-bar-counter.jpg';
 import resCoveredPatio from '../assets/residential/covered-patio-pool-deck.jpg';
 
+import resHeroOutdoorLiving from '../assets/residential/hero-outdoor-living.jpg';
+import resHeroDriveway from '../assets/residential/hero-driveway-pavers.jpg';
+import resHeroInstallation from '../assets/residential/hero-paver-installation.jpg';
+
 import vizFrontBefore from '../assets/residential/front-walkway-before.jpg';
 import vizFrontAfter from '../assets/residential/front-walkway-after-ai.jpg';
 import vizDrivewayBefore from '../assets/residential/driveway-before.jpg';
@@ -126,6 +130,34 @@ export function commercialServiceImage(slug: string): MediaImage | undefined {
 }
 
 export const residentialMedia = {
+  /**
+   * Portada residencial (pedido del cliente 2026-10-16): la foto anterior no
+   * le gustaba; quiere enfasis en outdoor living y pavers en una "casa de
+   * ensueno". Imagen elegida por el cliente: piscina, cocina exterior,
+   * pergola y fire pit. Es una visualizacion IA, se etiqueta como tal.
+   *
+   * Resumen visual en movimiento (pedido 2026-10-16, referencia
+   * perfectpavers.com): las imagenes rotan con fundido y zoom lento, en este
+   * orden: outdoor living, driveway, colocacion de pavers. Para sumar una
+   * escena basta con anadirla a este array. Driveway e instalacion
+   * generadas con IA el 2026-10-19 a partir de referencias del cliente (no se
+   * usaron las fotos de referencia: son de anuncios inmobiliarios).
+   */
+  heroSlides: [
+    {
+      src: resHeroOutdoorLiving,
+      alt: 'Backyard at sunset with a paver pool deck, fire pit lounge and covered outdoor kitchen',
+    },
+    {
+      src: resHeroDriveway,
+      alt: 'Modern South Florida home with a wide grey paver driveway and light border band',
+    },
+    {
+      src: resHeroInstallation,
+      alt: 'Close-up of hands setting a travertine paver onto a leveled sand bed',
+    },
+  ] satisfies MediaImage[],
+
   /** Antes/despues real de una transformacion de pool deck (2026-09-24). */
   beforeAfter: {
     before: {
